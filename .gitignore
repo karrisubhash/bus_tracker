@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Database
+db.sqlite3
+
+# Static
+staticfiles/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# ngrok
+ngrok/

@@ -1,2 +1,0 @@
-﻿C:\ngrok\lib\ngrok\tools\ngrok.exe
-
