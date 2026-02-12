@@ -1,9 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.shortcuts import render
+
+def home(request):
+    return render(request, "admin_login.html")
 
 urlpatterns = [
     # Django admin
+    path("",home),
     path('admin/', admin.site.urls),
 
     # API routes
