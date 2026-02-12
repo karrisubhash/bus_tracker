@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WS Test</title>
+</head>
+<body>
+<h2>WebSocket Trip Live Feed</h2>
+
+<input id="trip" placeholder="Enter Trip ID" />
+<button onclick="connectWS()">Connect</button>
+
+<pre id="log"></pre>
+
+<script>
+function connectWS() {
+    const tripId = document.getElementById("trip").value;
+    const log = document.getElementById("log");
+
+    const ws = new WebSocket(`ws://${window.location.host}/ws/trip/${tripId}/`);
+
+    ws.onopen = () => {
+        log.textContent += "Connected.\n";
+    };
+
+    ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        log.textContent += JSON.stringify(data, null, 2) + "\n";
+    };
+
+    ws.onclose = () => {
+        log.textContent += "Disconnected.\n";
+    };
+}
+</script>
+
+</body>
+</html>

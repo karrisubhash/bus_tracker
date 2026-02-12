@@ -1,0 +1,368 @@
+2025-12-26 00:20:09,806 18260 [INFO ] - ============================================================
+2025-12-26 00:20:10,380 18260 [INFO ] - Chocolatey v2.5.0
+2025-12-26 00:20:10,734 18260 [WARN ] - Directory 'C:\ngrok\lib' does not exist.
+2025-12-26 00:20:10,907 18260 [INFO ] - 3 validations performed. 3 success(es), 0 warning(s), and 0 error(s).
+2025-12-26 00:20:10,949 18260 [INFO ] - Installing the following packages:
+2025-12-26 00:20:10,953 18260 [INFO ] - ngrok
+2025-12-26 00:20:10,955 18260 [INFO ] - By installing, you accept licenses for the packages.
+2025-12-26 00:20:11,803 18260 [INFO ] - [NuGet]   GET https://community.chocolatey.org/api/v2/$metadata
+2025-12-26 00:20:11,851 18260 [INFO ] - [NuGet]   OK https://community.chocolatey.org/api/v2/$metadata 45ms
+2025-12-26 00:20:11,942 18260 [INFO ] - [NuGet]   GET https://community.chocolatey.org/api/v2/Packages()?$filter=(tolower(Id) eq 'ngrok') and IsLatestVersion&semVerLevel=2.0.0
+2025-12-26 00:20:11,987 18260 [INFO ] - [NuGet]   OK https://community.chocolatey.org/api/v2/Packages()?$filter=(tolower(Id) eq 'ngrok') and IsLatestVersion&semVerLevel=2.0.0 48ms
+2025-12-26 00:20:12,203 18260 [INFO ] - [NuGet]   GET https://community.chocolatey.org/api/v2/Packages(Id='ngrok',Version='3.34.1')
+2025-12-26 00:20:12,249 18260 [INFO ] - [NuGet]   OK https://community.chocolatey.org/api/v2/Packages(Id='ngrok',Version='3.34.1') 44ms
+2025-12-26 00:20:12,373 18260 [INFO ] - [NuGet] Resolving dependency information took 0 ms
+2025-12-26 00:20:12,405 18260 [INFO ] - Downloading package from source 'https://community.chocolatey.org/api/v2/'
+2025-12-26 00:20:12,441 18260 [INFO ] - [NuGet] Adding package 'ngrok.3.34.1' to folder 'C:\ngrok\lib'
+2025-12-26 00:20:12,550 18260 [INFO ] - [NuGet] Added package 'ngrok.3.34.1' to folder 'C:\ngrok\lib'
+2025-12-26 00:20:12,631 18260 [INFO ] - 
+ngrok v3.34.1
+2025-12-26 00:20:12,717 18260 [INFO ] - ngrok package files install completed. Performing other installation steps.
+2025-12-26 00:20:12,846 18260 [INFO ] - The package ngrok wants to run 'chocolateyinstall.ps1'.
+2025-12-26 00:20:12,848 18260 [INFO ] - Note: If you don't run this script, the installation will fail.
+2025-12-26 00:20:12,848 18260 [INFO ] - Note: To confirm automatically next time, use '-y' or consider:
+2025-12-26 00:20:12,848 18260 [INFO ] - choco feature enable -n allowGlobalConfirmation
+2025-12-26 00:20:12,879 18260 [INFO ] - Do you want to run the script?
+2025-12-26 00:20:12,879 18260 [INFO ] -  1) yes
+2025-12-26 00:20:12,879 18260 [INFO ] -  2) all scripts
+2025-12-26 00:20:12,879 18260 [INFO ] -  3) no
+2025-12-26 00:20:12,879 18260 [INFO ] -  4) print
+2025-12-26 00:20:26,583 18260 [INFO ] - Choice selected: 'yes'
+2025-12-26 00:20:29,718 18260 [INFO ] - VERBOSE: Exporting function 'Format-FileSize'.
+2025-12-26 00:20:29,720 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChecksumValid'.
+2025-12-26 00:20:29,721 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyConfigValue'.
+2025-12-26 00:20:29,722 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyPath'.
+2025-12-26 00:20:29,723 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyUnzip'.
+2025-12-26 00:20:29,725 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyWebFile'.
+2025-12-26 00:20:29,726 18260 [INFO ] - VERBOSE: Exporting function 'Get-FtpFile'.
+2025-12-26 00:20:29,727 18260 [INFO ] - VERBOSE: Exporting function 'Get-OSArchitectureWidth'.
+2025-12-26 00:20:29,728 18260 [INFO ] - VERBOSE: Exporting function 'Get-PackageParameters'.
+2025-12-26 00:20:29,729 18260 [INFO ] - VERBOSE: Exporting function 'Get-PackageParametersBuiltIn'.
+2025-12-26 00:20:29,731 18260 [INFO ] - VERBOSE: Exporting function 'Get-ToolsLocation'.
+2025-12-26 00:20:29,732 18260 [INFO ] - VERBOSE: Exporting function 'Get-UACEnabled'.
+2025-12-26 00:20:29,733 18260 [INFO ] - VERBOSE: Exporting function 'Get-UninstallRegistryKey'.
+2025-12-26 00:20:29,734 18260 [INFO ] - VERBOSE: Exporting function 'Get-VirusCheckValid'.
+2025-12-26 00:20:29,736 18260 [INFO ] - VERBOSE: Exporting function 'Get-WebFile'.
+2025-12-26 00:20:29,736 18260 [INFO ] - VERBOSE: Exporting function 'Get-WebFileName'.
+2025-12-26 00:20:29,736 18260 [INFO ] - VERBOSE: Exporting function 'Get-WebHeaders'.
+2025-12-26 00:20:29,740 18260 [INFO ] - VERBOSE: Exporting function 'Install-BinFile'.
+2025-12-26 00:20:29,741 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyEnvironmentVariable'.
+2025-12-26 00:20:29,741 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyExplorerMenuItem'.
+2025-12-26 00:20:29,743 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyFileAssociation'.
+2025-12-26 00:20:29,744 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyInstallPackage'.
+2025-12-26 00:20:29,745 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPackage'.
+2025-12-26 00:20:29,747 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPinnedTaskBarItem'.
+2025-12-26 00:20:29,748 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPowershellCommand'.
+2025-12-26 00:20:29,749 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyShortcut'.
+2025-12-26 00:20:29,749 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyVsixPackage'.
+2025-12-26 00:20:29,752 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyZipPackage'.
+2025-12-26 00:20:29,752 18260 [INFO ] - VERBOSE: Exporting function 'Install-Vsix'.
+2025-12-26 00:20:29,755 18260 [INFO ] - VERBOSE: Exporting function 'Set-PowerShellExitCode'.
+2025-12-26 00:20:29,755 18260 [INFO ] - VERBOSE: Exporting function 'Start-ChocolateyProcessAsAdmin'.
+2025-12-26 00:20:29,757 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-BinFile'.
+2025-12-26 00:20:29,759 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyEnvironmentVariable'.
+2025-12-26 00:20:29,760 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyPackage'.
+2025-12-26 00:20:29,760 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyZipPackage'.
+2025-12-26 00:20:29,762 18260 [INFO ] - VERBOSE: Exporting function 'Write-FunctionCallLogMessage'.
+2025-12-26 00:20:29,765 18260 [INFO ] - VERBOSE: Exporting alias 'Get-ProcessorBits'.
+2025-12-26 00:20:29,765 18260 [INFO ] - VERBOSE: Exporting alias 'Get-OSBitness'.
+2025-12-26 00:20:29,767 18260 [INFO ] - VERBOSE: Exporting alias 'Get-InstallRegistryKey'.
+2025-12-26 00:20:29,767 18260 [INFO ] - VERBOSE: Exporting alias 'Generate-BinFile'.
+2025-12-26 00:20:29,771 18260 [INFO ] - VERBOSE: Exporting alias 'Add-BinFile'.
+2025-12-26 00:20:29,771 18260 [INFO ] - VERBOSE: Exporting alias 'Start-ChocolateyProcess'.
+2025-12-26 00:20:29,773 18260 [INFO ] - VERBOSE: Exporting alias 'Invoke-ChocolateyProcess'.
+2025-12-26 00:20:29,773 18260 [INFO ] - VERBOSE: Exporting alias 'Remove-BinFile'.
+2025-12-26 00:20:29,785 18260 [INFO ] - VERBOSE: Exporting function 'Format-FileSize'.
+2025-12-26 00:20:29,788 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChecksumValid'.
+2025-12-26 00:20:29,788 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyConfigValue'.
+2025-12-26 00:20:29,790 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyPath'.
+2025-12-26 00:20:29,790 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyUnzip'.
+2025-12-26 00:20:29,793 18260 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyWebFile'.
+2025-12-26 00:20:29,794 18260 [INFO ] - VERBOSE: Exporting function 'Get-FtpFile'.
+2025-12-26 00:20:29,795 18260 [INFO ] - VERBOSE: Exporting function 'Get-OSArchitectureWidth'.
+2025-12-26 00:20:29,795 18260 [INFO ] - VERBOSE: Exporting function 'Get-PackageParameters'.
+2025-12-26 00:20:29,798 18260 [INFO ] - VERBOSE: Exporting function 'Get-PackageParametersBuiltIn'.
+2025-12-26 00:20:29,799 18260 [INFO ] - VERBOSE: Exporting function 'Get-ToolsLocation'.
+2025-12-26 00:20:29,799 18260 [INFO ] - VERBOSE: Exporting function 'Get-UACEnabled'.
+2025-12-26 00:20:29,801 18260 [INFO ] - VERBOSE: Exporting function 'Get-UninstallRegistryKey'.
+2025-12-26 00:20:29,801 18260 [INFO ] - VERBOSE: Exporting function 'Get-VirusCheckValid'.
+2025-12-26 00:20:29,803 18260 [INFO ] - VERBOSE: Exporting function 'Get-WebFile'.
+2025-12-26 00:20:29,803 18260 [INFO ] - VERBOSE: Exporting function 'Get-WebFileName'.
+2025-12-26 00:20:29,805 18260 [INFO ] - VERBOSE: Exporting function 'Get-WebHeaders'.
+2025-12-26 00:20:29,807 18260 [INFO ] - VERBOSE: Exporting function 'Install-BinFile'.
+2025-12-26 00:20:29,808 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyEnvironmentVariable'.
+2025-12-26 00:20:29,809 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyExplorerMenuItem'.
+2025-12-26 00:20:29,809 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyFileAssociation'.
+2025-12-26 00:20:29,811 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyInstallPackage'.
+2025-12-26 00:20:29,813 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPackage'.
+2025-12-26 00:20:29,814 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPinnedTaskBarItem'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPowershellCommand'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyShortcut'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyVsixPackage'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyZipPackage'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Install-Vsix'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Set-PowerShellExitCode'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Start-ChocolateyProcessAsAdmin'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-BinFile'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyEnvironmentVariable'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyPackage'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyZipPackage'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting function 'Write-FunctionCallLogMessage'.
+2025-12-26 00:20:29,815 18260 [INFO ] - VERBOSE: Exporting alias 'Get-ProcessorBits'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Get-OSBitness'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Get-InstallRegistryKey'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Generate-BinFile'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Add-BinFile'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Start-ChocolateyProcess'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Invoke-ChocolateyProcess'.
+2025-12-26 00:20:29,831 18260 [INFO ] - VERBOSE: Exporting alias 'Remove-BinFile'.
+2025-12-26 00:20:29,839 18260 [INFO ] - VERBOSE: Importing function 'Format-FileSize'.
+2025-12-26 00:20:29,839 18260 [INFO ] - VERBOSE: Importing function 'Get-ChecksumValid'.
+2025-12-26 00:20:29,839 18260 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyConfigValue'.
+2025-12-26 00:20:29,839 18260 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyPath'.
+2025-12-26 00:20:29,839 18260 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyUnzip'.
+2025-12-26 00:20:29,848 18260 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyWebFile'.
+2025-12-26 00:20:29,848 18260 [INFO ] - VERBOSE: Importing function 'Get-FtpFile'.
+2025-12-26 00:20:29,850 18260 [INFO ] - VERBOSE: Importing function 'Get-OSArchitectureWidth'.
+2025-12-26 00:20:29,850 18260 [INFO ] - VERBOSE: Importing function 'Get-PackageParameters'.
+2025-12-26 00:20:29,850 18260 [INFO ] - VERBOSE: Importing function 'Get-PackageParametersBuiltIn'.
+2025-12-26 00:20:29,850 18260 [INFO ] - VERBOSE: Importing function 'Get-ToolsLocation'.
+2025-12-26 00:20:29,856 18260 [INFO ] - VERBOSE: Importing function 'Get-UACEnabled'.
+2025-12-26 00:20:29,856 18260 [INFO ] - VERBOSE: Importing function 'Get-UninstallRegistryKey'.
+2025-12-26 00:20:29,858 18260 [INFO ] - VERBOSE: Importing function 'Get-VirusCheckValid'.
+2025-12-26 00:20:29,858 18260 [INFO ] - VERBOSE: Importing function 'Get-WebFile'.
+2025-12-26 00:20:29,858 18260 [INFO ] - VERBOSE: Importing function 'Get-WebFileName'.
+2025-12-26 00:20:29,862 18260 [INFO ] - VERBOSE: Importing function 'Get-WebHeaders'.
+2025-12-26 00:20:29,862 18260 [INFO ] - VERBOSE: Importing function 'Install-BinFile'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyEnvironmentVariable'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyExplorerMenuItem'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyFileAssociation'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyInstallPackage'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPackage'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPinnedTaskBarItem'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPowershellCommand'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyShortcut'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyVsixPackage'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyZipPackage'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Install-Vsix'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Set-PowerShellExitCode'.
+2025-12-26 00:20:29,864 18260 [INFO ] - VERBOSE: Importing function 'Start-ChocolateyProcessAsAdmin'.
+2025-12-26 00:20:29,880 18260 [INFO ] - VERBOSE: Importing function 'Uninstall-BinFile'.
+2025-12-26 00:20:29,880 18260 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyEnvironmentVariable'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyPackage'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyZipPackage'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing function 'Write-FunctionCallLogMessage'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Add-BinFile'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Generate-BinFile'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Get-InstallRegistryKey'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Get-OSBitness'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Get-ProcessorBits'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Invoke-ChocolateyProcess'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Remove-BinFile'.
+2025-12-26 00:20:29,883 18260 [INFO ] - VERBOSE: Importing alias 'Start-ChocolateyProcess'.
+2025-12-26 00:20:32,217 18260 [INFO ] - Downloading ngrok 64 bit
+  from 'https://bin.equinox.io/a/a5dZ1xZdUdx/ngrok-v3-3.34.1-windows-amd64.zip'
+2025-12-26 00:27:38,691 18260 [ERROR] - ERROR: The remote file either doesn't exist, is unauthorized, or is forbidden for url 'https://bin.equinox.io/a/a5dZ1xZdUdx/ngrok-v3-3.34.1-windows-amd64.zip'. Exception calling "Read" with "3" argument(s): "Unable to read data from the transport connection: An established connection was aborted by the software in your host machine."
+2025-12-26 00:27:39,339 18260 [ERROR] - The install of ngrok was NOT successful.
+2025-12-26 00:27:39,344 18260 [ERROR] - Error while running 'C:\ngrok\lib\ngrok\tools\chocolateyinstall.ps1'.
+ See log for details.
+2025-12-26 00:27:41,402 18260 [WARN ] - 
+Chocolatey installed 0/1 packages. 1 packages failed.
+ See the log for details (C:\ngrok\logs\chocolatey.log).
+2025-12-26 00:27:41,413 18260 [INFO ] - 
+2025-12-26 00:27:41,415 18260 [ERROR] - Failures
+2025-12-26 00:27:41,418 18260 [ERROR] -  - ngrok (exited 404) - Error while running 'C:\ngrok\lib\ngrok\tools\chocolateyinstall.ps1'.
+ See log for details.
+2025-12-26 00:28:15,906 18056 [INFO ] - ============================================================
+2025-12-26 00:28:16,462 18056 [INFO ] - Chocolatey v2.5.0
+2025-12-26 00:28:16,664 18056 [INFO ] - 3 validations performed. 3 success(es), 0 warning(s), and 0 error(s).
+2025-12-26 00:28:16,702 18056 [INFO ] - Installing the following packages:
+2025-12-26 00:28:16,711 18056 [INFO ] - ngrok
+2025-12-26 00:28:16,713 18056 [INFO ] - By installing, you accept licenses for the packages.
+2025-12-26 00:28:17,506 18056 [INFO ] - [NuGet]   CACHE https://community.chocolatey.org/api/v2/$metadata
+2025-12-26 00:28:17,540 18056 [INFO ] - [NuGet]   CACHE https://community.chocolatey.org/api/v2/Packages()?$filter=(tolower(Id)%20eq%20'ngrok')%20and%20IsLatestVersion&semVerLevel=2.0.0
+2025-12-26 00:28:17,651 18056 [INFO ] - [NuGet]   CACHE https://community.chocolatey.org/api/v2/Packages(Id='ngrok',Version='3.34.1')
+2025-12-26 00:28:17,757 18056 [INFO ] - [NuGet] Resolving dependency information took 0 ms
+2025-12-26 00:28:17,782 18056 [INFO ] - Downloading package from source 'https://community.chocolatey.org/api/v2/'
+2025-12-26 00:28:17,809 18056 [INFO ] - [NuGet]   GET https://community.chocolatey.org/api/v2/package/ngrok/3.34.1
+2025-12-26 00:28:18,241 18056 [INFO ] - [NuGet]   OK https://community.chocolatey.org/api/v2/package/ngrok/3.34.1 434ms
+2025-12-26 00:28:18,288 18056 [INFO ] - [NuGet] Acquiring lock for the installation of ngrok 3.34.1
+2025-12-26 00:28:18,363 18056 [INFO ] - [NuGet] Acquired lock for the installation of ngrok 3.34.1
+2025-12-26 00:28:18,679 18056 [INFO ] - [NuGet] Installed ngrok 3.34.1 from https://community.chocolatey.org/api/v2/ with content hash 32NG2r4lCzZ9FpinRA40tHdtTRLU4eAcxB7qNCJpqVvQHt9tRnl06gqqoqZntKkcCJSJCu0EWGfkX+JbFg4oNg==.
+2025-12-26 00:28:18,705 18056 [INFO ] - [NuGet] Adding package 'ngrok.3.34.1' to folder 'C:\ngrok\lib'
+2025-12-26 00:28:18,746 18056 [INFO ] - [NuGet] Added package 'ngrok.3.34.1' to folder 'C:\ngrok\lib'
+2025-12-26 00:28:18,789 18056 [INFO ] - 
+ngrok v3.34.1
+2025-12-26 00:28:18,833 18056 [INFO ] - ngrok package files install completed. Performing other installation steps.
+2025-12-26 00:28:18,952 18056 [INFO ] - The package ngrok wants to run 'chocolateyinstall.ps1'.
+2025-12-26 00:28:18,956 18056 [INFO ] - Note: If you don't run this script, the installation will fail.
+2025-12-26 00:28:18,958 18056 [INFO ] - Note: To confirm automatically next time, use '-y' or consider:
+2025-12-26 00:28:18,960 18056 [INFO ] - choco feature enable -n allowGlobalConfirmation
+2025-12-26 00:28:18,987 18056 [INFO ] - Do you want to run the script?
+2025-12-26 00:28:18,989 18056 [INFO ] -  1) yes
+2025-12-26 00:28:18,989 18056 [INFO ] -  2) all scripts
+2025-12-26 00:28:18,989 18056 [INFO ] -  3) no
+2025-12-26 00:28:18,993 18056 [INFO ] -  4) print
+2025-12-26 00:28:21,844 18056 [INFO ] - Choice selected: 'yes'
+2025-12-26 00:28:22,558 18056 [INFO ] - VERBOSE: Exporting function 'Format-FileSize'.
+2025-12-26 00:28:22,558 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChecksumValid'.
+2025-12-26 00:28:22,558 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyConfigValue'.
+2025-12-26 00:28:22,558 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyPath'.
+2025-12-26 00:28:22,558 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyUnzip'.
+2025-12-26 00:28:22,558 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyWebFile'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-FtpFile'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-OSArchitectureWidth'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-PackageParameters'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-PackageParametersBuiltIn'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-ToolsLocation'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-UACEnabled'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-UninstallRegistryKey'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-VirusCheckValid'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-WebFile'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-WebFileName'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Get-WebHeaders'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Install-BinFile'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyEnvironmentVariable'.
+2025-12-26 00:28:22,574 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyExplorerMenuItem'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyFileAssociation'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyInstallPackage'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPackage'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPinnedTaskBarItem'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPowershellCommand'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyShortcut'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyVsixPackage'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyZipPackage'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Install-Vsix'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Set-PowerShellExitCode'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Start-ChocolateyProcessAsAdmin'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-BinFile'.
+2025-12-26 00:28:22,590 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyEnvironmentVariable'.
+2025-12-26 00:28:22,606 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyPackage'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyZipPackage'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting function 'Write-FunctionCallLogMessage'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Get-ProcessorBits'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Get-OSBitness'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Get-InstallRegistryKey'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Generate-BinFile'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Add-BinFile'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Start-ChocolateyProcess'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Invoke-ChocolateyProcess'.
+2025-12-26 00:28:22,607 18056 [INFO ] - VERBOSE: Exporting alias 'Remove-BinFile'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Format-FileSize'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChecksumValid'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyConfigValue'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyPath'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyUnzip'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-ChocolateyWebFile'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-FtpFile'.
+2025-12-26 00:28:22,622 18056 [INFO ] - VERBOSE: Exporting function 'Get-OSArchitectureWidth'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-PackageParameters'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-PackageParametersBuiltIn'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-ToolsLocation'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-UACEnabled'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-UninstallRegistryKey'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-VirusCheckValid'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-WebFile'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-WebFileName'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Get-WebHeaders'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-BinFile'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyEnvironmentVariable'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyExplorerMenuItem'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyFileAssociation'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyInstallPackage'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPackage'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPinnedTaskBarItem'.
+2025-12-26 00:28:22,638 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyPowershellCommand'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyShortcut'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyVsixPackage'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Install-ChocolateyZipPackage'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Install-Vsix'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Set-PowerShellExitCode'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Start-ChocolateyProcessAsAdmin'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-BinFile'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyEnvironmentVariable'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyPackage'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Uninstall-ChocolateyZipPackage'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting function 'Write-FunctionCallLogMessage'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting alias 'Get-ProcessorBits'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting alias 'Get-OSBitness'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting alias 'Get-InstallRegistryKey'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting alias 'Generate-BinFile'.
+2025-12-26 00:28:22,654 18056 [INFO ] - VERBOSE: Exporting alias 'Add-BinFile'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Exporting alias 'Start-ChocolateyProcess'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Exporting alias 'Invoke-ChocolateyProcess'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Exporting alias 'Remove-BinFile'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Format-FileSize'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-ChecksumValid'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyConfigValue'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyPath'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyUnzip'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-ChocolateyWebFile'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-FtpFile'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-OSArchitectureWidth'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-PackageParameters'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-PackageParametersBuiltIn'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-ToolsLocation'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-UACEnabled'.
+2025-12-26 00:28:22,669 18056 [INFO ] - VERBOSE: Importing function 'Get-UninstallRegistryKey'.
+2025-12-26 00:28:22,686 18056 [INFO ] - VERBOSE: Importing function 'Get-VirusCheckValid'.
+2025-12-26 00:28:22,687 18056 [INFO ] - VERBOSE: Importing function 'Get-WebFile'.
+2025-12-26 00:28:22,687 18056 [INFO ] - VERBOSE: Importing function 'Get-WebFileName'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Get-WebHeaders'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-BinFile'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyEnvironmentVariable'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyExplorerMenuItem'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyFileAssociation'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyInstallPackage'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPackage'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPinnedTaskBarItem'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyPowershellCommand'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyShortcut'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyVsixPackage'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-ChocolateyZipPackage'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Install-Vsix'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Set-PowerShellExitCode'.
+2025-12-26 00:28:22,689 18056 [INFO ] - VERBOSE: Importing function 'Start-ChocolateyProcessAsAdmin'.
+2025-12-26 00:28:22,701 18056 [INFO ] - VERBOSE: Importing function 'Uninstall-BinFile'.
+2025-12-26 00:28:22,701 18056 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyEnvironmentVariable'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyPackage'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing function 'Uninstall-ChocolateyZipPackage'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing function 'Write-FunctionCallLogMessage'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Add-BinFile'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Generate-BinFile'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Get-InstallRegistryKey'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Get-OSBitness'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Get-ProcessorBits'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Invoke-ChocolateyProcess'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Remove-BinFile'.
+2025-12-26 00:28:22,703 18056 [INFO ] - VERBOSE: Importing alias 'Start-ChocolateyProcess'.
+2025-12-26 00:28:24,951 18056 [INFO ] - File appears to be downloaded already. Verifying with package checksum to determine if it needs to be redownloaded.
+2025-12-26 00:28:25,558 18056 [INFO ] - Downloading ngrok 64 bit
+  from 'https://bin.equinox.io/a/a5dZ1xZdUdx/ngrok-v3-3.34.1-windows-amd64.zip'
+2025-12-26 00:29:34,455 18056 [INFO ] - 
+2025-12-26 00:29:34,455 18056 [INFO ] - Download of ngrok-v3-3.34.1-windows-amd64.zip (11.11 MB) completed.
+2025-12-26 00:29:37,859 18056 [INFO ] - Extracting C:\Users\Admin\AppData\Local\Temp\chocolatey\ngrok\3.34.1\ngrok-v3-3.34.1-windows-amd64.zip to C:\ngrok\lib\ngrok\tools...
+2025-12-26 00:29:38,531 18056 [INFO ] - VERBOSE: 
+2025-12-26 00:29:38,532 18056 [INFO ] - VERBOSE: 7-Zip 24.09 (x86) : Copyright (c) 1999-2024 Igor Pavlov : 2024-11-29
+2025-12-26 00:29:38,535 18056 [INFO ] - VERBOSE: 
+2025-12-26 00:29:38,535 18056 [INFO ] - VERBOSE: Scanning the drive for archives:
+2025-12-26 00:29:38,535 18056 [INFO ] - VERBOSE: 1 file, 11646367 bytes (12 MiB)
+2025-12-26 00:29:38,542 18056 [INFO ] - VERBOSE: 
+2025-12-26 00:29:38,542 18056 [INFO ] - VERBOSE: Extracting archive: C:\Users\Admin\AppData\Local\Temp\chocolatey\ngrok\3.34.1\ngrok-v3-3.34.1-windows-amd64.zip
+2025-12-26 00:29:38,543 18056 [INFO ] - VERBOSE: --
+2025-12-26 00:29:38,543 18056 [INFO ] - VERBOSE: Path = C:\Users\Admin\AppData\Local\Temp\chocolatey\ngrok\3.34.1\ngrok-v3-3.34.1-windows-amd64.zip
+2025-12-26 00:29:38,546 18056 [INFO ] - VERBOSE: Physical Size = 11646367
+2025-12-26 00:29:38,546 18056 [INFO ] - VERBOSE: 
+2025-12-26 00:29:38,546 18056 [INFO ] - VERBOSE: - ngrok.exe
+2025-12-26 00:29:38,552 18056 [INFO ] - VERBOSE: Type = zip
+2025-12-26 00:29:38,552 18056 [INFO ] - VERBOSE: 
+2025-12-26 00:29:38,557 18056 [INFO ] - VERBOSE: Everything is Ok
+2025-12-26 00:29:38,557 18056 [INFO ] - VERBOSE: Compressed: 11646367
+2025-12-26 00:29:38,557 18056 [INFO ] - VERBOSE: Size:       31770400
+2025-12-26 00:29:38,652 18056 [INFO ] - C:\ngrok\lib\ngrok\tools
+2025-12-26 00:29:40,634 18056 [INFO ] -  ShimGen has successfully created a shim for ngrok.exe
+2025-12-26 00:29:40,742 18056 [INFO ] -  The install of ngrok was successful.
+2025-12-26 00:29:40,747 18056 [INFO ] -   Deployed to 'C:\ngrok\lib\ngrok\tools'
+2025-12-26 00:29:40,773 18056 [WARN ] - 
+Chocolatey installed 1/1 packages. 
+ See the log for details (C:\ngrok\logs\chocolatey.log).

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Live Bus</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet"
+   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Routing Machine -->
+  <link rel="stylesheet"
+   href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+  <style>
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+
+/* ================= CONSTANTS ================= */
+
+// 🎓 College Location (same as admin)
+const COLLEGE = L.latLng(17.91925, 83.42445);
+const STOP = L.latLng(17.91984, 83.41716);
+
+const busIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/174/174237.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
+
+/* ================= AUTH ================= */
+
+const token = localStorage.getItem("student_token");
+
+if (!token) {
+  alert("Login first");
+  window.location.href = "/student-login/";
+}
+
+/* ================= MAP ================= */
+
+const map = L.map("map").setView([17.91925, 83.42445], 11);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
+
+let marker = null;
+let tripId = null;
+let routeControl = null;
+
+/* ================= GET STUDENT BUS ================= */
+
+async function getMyBus() {
+
+  const res = await fetch("/api/student/my-bus/", {
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  if (!res.ok) {
+    alert("No active bus");
+    return;
+  }
+
+  const data = await res.json();
+  tripId = data.trip_id;
+
+  loadLocation();
+  setInterval(loadLocation, 5000);
+}
+
+/* ================= LOAD LIVE LOCATION ================= */
+
+async function loadLocation() {
+
+  if (!tripId) return;
+
+  const res = await fetch(`/api/trips/${tripId}/latest_ping/`, {
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  if (!res.ok) return;
+
+  const data = await res.json();
+  if (!data.lat) return;
+
+  const busPos = L.latLng(data.lat, data.lon);
+
+  if (!marker) {
+  marker = L.marker(busPos, { icon: busIcon }).addTo(map);
+  map.setView(busPos, 13);
+} else {
+  marker.setLatLng(busPos);
+}
+
+  /* 🛣 Polyline: BUS → COLLEGE */
+  if (!routeControl) {
+    routeControl = L.Routing.control({
+      waypoints: [busPos, COLLEGE],
+      router: L.Routing.osrmv1({
+        serviceUrl: "https://router.project-osrm.org/route/v1"
+      }),
+      lineOptions: {
+        styles: [{ color: "#2563eb", weight: 5 }]
+      },
+      addWaypoints: false,
+      draggableWaypoints: false,
+      fitSelectedRoutes: false,
+      show: false,
+      createMarker: () => null
+    }).addTo(map);
+  } else {
+    routeControl.setWaypoints([busPos,STOP, COLLEGE]);
+  }
+}
+
+getMyBus();
+
+</script>
+
+</body>
+</html>

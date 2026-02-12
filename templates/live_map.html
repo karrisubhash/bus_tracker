@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Bus Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <style>
+        #map { height: 90vh; width: 100%; }
+    </style>
+</head>
+<body>
+
+<h2>Live Bus Tracking</h2>
+
+<input id="trip" placeholder="Enter Trip ID" />
+<button onclick="startTracking()">Start Tracking</button>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+let map, marker, ws;
+
+function startTracking() {
+    const tripId = document.getElementById("trip").value;
+
+    if (!map) {
+        map = L.map('map').setView([17.0, 82.0], 13); // default center
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+    }
+
+    ws = new WebSocket(`ws://${window.location.host}/ws/trip/${tripId}/`);
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "location.update") {
+            const { lat, lon } = data.payload;
+
+            // place marker if first time
+            if (!marker) {
+                marker = L.marker([lat, lon]).addTo(map);
+            } else {
+                marker.setLatLng([lat, lon]);
+            }
+
+            map.setView([lat, lon]);
+        }
+    };
+}
+</script>
+
+</body>
+</html>

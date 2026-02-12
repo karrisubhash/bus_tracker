@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin – BUS Trips</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #333;
+      color: white;
+    }
+    .issue {
+      background: #ffcccc;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🚌 Bus Trips</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Trip ID</th>
+      <th>Bus</th>
+      <th>Route</th>
+      <th>Driver</th>
+      <th>Start Time</th>
+<th>End Time</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<script>
+
+function formatIST(datetime) {
+  if (!datetime) return "-";
+
+  const date = new Date(datetime);
+
+  return date.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+
+const token = localStorage.getItem("admin_token");
+
+if (!token) {
+  alert("Admin login required");
+  window.location.href = "/admin/login/";
+}
+
+async function loadTrips() {
+  const res = await fetch("/api/admin/ongoing-trips/", {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
+
+  if (!res.ok) return;
+
+  const trips = await res.json();
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = "";
+
+  trips.forEach(trip => {
+    const row = document.createElement("tr");
+
+    if (trip.has_issue) {
+      row.classList.add("issue");
+    }
+
+    row.innerHTML = `
+      <td>${trip.trip_id}</td>
+      <td>${trip.bus}</td>
+      <td>${trip.route || "-"}</td>
+      <td>${trip.driver || "-"}</td>
+     <td>${formatIST(trip.start_time)}</td>
+<td>${formatIST(trip.end_time)}</td>
+      <td>${trip.has_issue ? "⚠ ISSUE" : "Normal"}</td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
+
+// initial load + auto refresh
+loadTrips();
+setInterval(loadTrips, 5000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 40px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .map-btn {
+      background: #2563eb;
+      color: white;
+    }
+
+    .table-btn {
+      background: #16a34a;
+      color: white;
+    }
+
+    .logout-btn {
+      background: #dc2626;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Admin Dashboard</h2>
+
+  <button class="map-btn" onclick="goMap()">Go to Live Map 🗺</button>
+  <button class="table-btn" onclick="goTable()">Go to Data Table 📊</button>
+  <button class="logout-btn" onclick="logout()">Logout 🚪</button>
+</div>
+
+<script>
+const token = localStorage.getItem("admin_token");
+
+if (!token) {
+  alert("Login required");
+  window.location.href = "/admin/login/";
+}
+
+function goMap() {
+  window.location.href = "/admin-panel/live/";
+}
+
+function goTable() {
+  window.location.href = "/admin-panel/table/";
+}
+
+function logout() {
+  localStorage.removeItem("admin_token");
+  alert("Logged out");
+  window.location.href = "/admin-panel/login/";
+}
+</script>
+
+</body>
+</html>
