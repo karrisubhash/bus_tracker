@@ -25,6 +25,7 @@ ALLOWED_HOSTS = ['*']
 # =====================================================
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,22 @@ INSTALLED_APPS = [
 
     # Your app
     'core',
+    
 ]
+JAZZMIN_SETTINGS = {
+    "site_title": "Bus Tracker Admin",
+    "site_header": "🚌 Bus Management System",
+    "site_brand": "BusTracker",
+    "welcome_sign": "Welcome to Bus Tracker Administration",
+    "copyright": "Subhash Bus Tracker",
+    "search_model": ["core.Trip", "core.User", "core.Bus"],
+
+    "icons": {
+        "core.Bus": "fas fa-bus",
+        "core.Trip": "fas fa-route",
+        "core.User": "fas fa-user",
+    },
+}
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

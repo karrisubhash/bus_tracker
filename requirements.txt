@@ -6,3 +6,4 @@ whitenoise==6.6.0
 psycopg2-binary==2.9.11
 channels==4.1.0
 dj-database-url==3.1.0
+jazzmin==3.0.0
