@@ -75,6 +75,25 @@ const issueIcon = L.icon({
 const markers = {};         // trip_id -> marker
 const routeControls = {};  // trip_id -> routing control
 let firstLoad = true;
+  function animateMarker(marker, newLatLng, duration = 4000) {
+  const start = marker.getLatLng();
+  const startTime = performance.now();
+
+  function animate(time) {
+    const progress = Math.min((time - startTime) / duration, 1);
+
+    const lat = start.lat + (newLatLng.lat - start.lat) * progress;
+    const lng = start.lng + (newLatLng.lng - start.lng) * progress;
+
+    marker.setLatLng([lat, lng]);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
 
 /* ================= LOAD LIVE BUSES ================= */
 
@@ -111,8 +130,8 @@ async function loadLiveBuses() {
             <b>👨‍✈ Driver:</b> ${bus.driver}<br>
           `);
       } else {
-        markers[tripId].setLatLng(busPos).setIcon(icon);
-      }
+animateMarker(markers[tripId], busPos, 4000);
+markers[tripId].setIcon(icon);      }
 
       /* 🛣 Route: BUS → COLLEGE */
       if (!routeControls[tripId]) {
