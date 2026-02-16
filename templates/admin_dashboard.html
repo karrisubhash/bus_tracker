@@ -2,32 +2,46 @@
 <html>
 <head>
   <title>Admin Dashboard</title>
+
+  <!-- Mobile Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
-      font-family: Arial;
-      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #2563eb, #9333ea);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
 
     .box {
       background: white;
       padding: 40px;
-      width: 350px;
+      width: 380px;
+      max-width: 90%;
       text-align: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-size: 22px;
     }
 
     button {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       margin-top: 15px;
       font-size: 16px;
       cursor: pointer;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.3s ease;
     }
 
     .map-btn {
@@ -35,15 +49,44 @@
       color: white;
     }
 
+    .map-btn:hover {
+      background: #1d4ed8;
+    }
+
     .table-btn {
       background: #16a34a;
       color: white;
+    }
+
+    .table-btn:hover {
+      background: #15803d;
     }
 
     .logout-btn {
       background: #dc2626;
       color: white;
     }
+
+    .logout-btn:hover {
+      background: #b91c1c;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+      .box {
+        padding: 25px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      button {
+        font-size: 17px;
+        padding: 16px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -61,7 +104,7 @@ const token = localStorage.getItem("admin_token");
 
 if (!token) {
   alert("Login required");
-  window.location.href = "/admin/login/";
+  window.location.href = "/admin-panel/login/";
 }
 
 function goMap() {
