@@ -2,32 +2,93 @@
 <html>
 <head>
   <title>Admin Login</title>
+
+  <!-- Mobile Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       display: flex;
       height: 100vh;
       justify-content: center;
       align-items: center;
-      background: #f5f5f5;
+      background: linear-gradient(135deg, #007bff, #6610f2);
+      margin: 0;
     }
+
     .box {
       background: white;
       padding: 30px;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 350px;
+      max-width: 90%;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
     }
-    input, button {
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
     }
+
     button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
       background: #007bff;
       color: white;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
     }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    /* Loader */
+    .loader {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+      .box {
+        padding: 20px;
+      }
+
+      input, button {
+        font-size: 16px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -37,41 +98,77 @@
 
   <input id="username" placeholder="Username">
   <input id="password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
+  <button id="loginBtn" onclick="login()">Login</button>
 
+  <!-- Loading Spinner -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Logging in...</p>
+  </div>
 </div>
 
 
 <script>
+
 async function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+  const loader = document.getElementById("loader");
+  const loginBtn = document.getElementById("loginBtn");
 
-  const res = await fetch("/api/token/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  });
-
-  const data = await res.json();
-if (!res.ok) {
-    alert("Login failed");
+  if (!username || !password) {
+    alert("Please enter username and password");
     return;
   }
 
-  if (data.user.role !== "admin") {
-    alert("Not an admin");
-    return;
+  loader.style.display = "block";
+  loginBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/token/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("Login failed");
+      loader.style.display = "none";
+      loginBtn.disabled = false;
+      return;
+    }
+
+    if (data.user?.role !== "admin") {
+      alert("Not an admin");
+      loader.style.display = "none";
+      loginBtn.disabled = false;
+      return;
+    }
+
+    localStorage.setItem("admin_token", data.access);
+    window.location.href = "/admin-panel/dashboard/";
+
+  } catch (error) {
+    alert("Network error");
+    loader.style.display = "none";
+    loginBtn.disabled = false;
   }
-alert("Login Success")
-  localStorage.setItem("admin_token", data.access);
-  window.location.href = "/admin-panel/dashboard/";
 }
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("admin_token");
-  alert("Logged out successfully");
-  window.location.href = "/admin-panel/login/";
-});
-</script></body>
+
+/* Safe logout handler (only if button exists) */
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("admin_token");
+    alert("Logged out successfully");
+    window.location.href = "/admin-panel/login/";
+  });
+}
+
+</script>
+
+</body>
 </html>
