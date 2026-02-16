@@ -2,37 +2,156 @@
 <html>
 <head>
   <title>Student Login</title>
+
+  <!-- Mobile Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #2563eb, #9333ea);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .box {
+      background: white;
+      padding: 35px;
+      width: 360px;
+      max-width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .loader {
+      display: none;
+      margin-top: 15px;
+    }
+
+    /* Spinner */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2563eb;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+      .box {
+        padding: 25px;
+      }
+
+      input, button {
+        font-size: 16px;
+      }
+    }
+
+  </style>
 </head>
 <body>
 
-<h2>🎓 Student Login</h2>
+<div class="box">
+  <h2>🎓 Student Login</h2>
 
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
+
+  <button id="loginBtn" onclick="login()">Login</button>
+
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+  </div>
+</div>
 
 <script>
 async function login() {
 
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+  const loginBtn = document.getElementById("loginBtn");
+  const loader = document.getElementById("loader");
 
-  const res = await fetch("/api/token/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password })
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    alert("Login failed");
+  if (!username || !password) {
+    alert("Please enter username and password");
     return;
   }
 
-  localStorage.setItem("student_token", data.access);
+  loginBtn.disabled = true;
+  loader.style.display = "block";
 
-  window.location.href = "/student-live/";
+  try {
+    const res = await fetch("/api/token/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("Login failed");
+      loginBtn.disabled = false;
+      loader.style.display = "none";
+      return;
+    }
+
+    localStorage.setItem("student_token", data.access);
+
+    window.location.href = "/student-live/";
+
+  } catch (error) {
+    alert("Network error");
+    loginBtn.disabled = false;
+    loader.style.display = "none";
+  }
 }
 </script>
 
