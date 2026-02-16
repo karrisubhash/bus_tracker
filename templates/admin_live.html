@@ -27,14 +27,21 @@
 
 <header>🛠 Admin Live Bus Monitoring</header>
 <div id="map"></div>
+
 <script>
 
 /* ================= CONSTANTS ================= */
 
+// 🎓 College fixed location
 const COLLEGE = L.latLng(17.91925, 83.42445);
 const STOP = L.latLng(17.91984, 83.41716);
+//const STOPs = L.latLng(17.72364, 83.30540);
+
+
+/* ================= AUTH ================= */
 
 const token = localStorage.getItem("admin_token");
+console.log("ADMIN TOKEN:", token);
 
 if (!token) {
   alert("Admin login required");
@@ -43,90 +50,31 @@ if (!token) {
 
 /* ================= MAP ================= */
 
-const map = L.map("map").setView([17.91925, 83.42445], 12);
+const map = L.map("map").setView([17.91925, 83.42445],9);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(map);
 
-/* ================= ICON ================= */
+/* ================= ICONS ================= */
 
-function createBusIcon(heading = 0, hasIssue = false) {
-  const iconUrl = hasIssue
-    ? "https://cdn-icons-png.flaticon.com/512/3205/3205237.png"
-    : "https://cdn-icons-png.flaticon.com/512/174/174237.png";
+const normalIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/174/174237.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
 
-  return L.divIcon({
-    className: "",
-    html: `
-      <div style="
-        transform: rotate(${heading}deg);
-        transition: transform 0.3s linear;
-        display:flex;
-      ">
-        <img src="${iconUrl}" width="26" />
-      </div>
-    `,
-    iconSize: [6, 26],
-    iconAnchor: [3, 3],
-  });
-}
+const issueIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
 
 /* ================= STATE ================= */
 
-const markers = {};
-const routeControls = {};
-const previousPositions = {};
-const lastUpdateTime = {};
-
+const markers = {};         // trip_id -> marker
+const routeControls = {};  // trip_id -> routing control
 let firstLoad = true;
-
-/* ================= SMOOTH MOVE ================= */
-
-function animateMarker(marker, from, to) {
-  const duration = 4000;
-  const start = performance.now();
-
-  function animate(time) {
-    const progress = Math.min((time - start) / duration, 1);
-
-    const lat = from.lat + (to.lat - from.lat) * progress;
-    const lng = from.lng + (to.lng - from.lng) * progress;
-
-    marker.setLatLng([lat, lng]);
-
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    }
-  }
-
-  requestAnimationFrame(animate);
-}
-
-/* ================= REMOVE INACTIVE BUSES ================= */
-
-function cleanupInactiveBuses() {
-  const now = Date.now();
-
-  Object.keys(lastUpdateTime).forEach(tripId => {
-    if (now - lastUpdateTime[tripId] > 15000) {
-      // No update for 15 seconds → remove
-
-      if (markers[tripId]) {
-        map.removeLayer(markers[tripId]);
-        delete markers[tripId];
-      }
-
-      if (routeControls[tripId]) {
-        map.removeControl(routeControls[tripId]);
-        delete routeControls[tripId];
-      }
-
-      delete previousPositions[tripId];
-      delete lastUpdateTime[tripId];
-    }
-  });
-}
 
 /* ================= LOAD LIVE BUSES ================= */
 
@@ -136,38 +84,40 @@ async function loadLiveBuses() {
       headers: { Authorization: "Bearer " + token }
     });
 
-    if (!res.ok) return;
+    if (!res.ok) {
+      console.error("API error:", res.status);
+      return;
+    }
 
     const buses = await res.json();
-    if (!Array.isArray(buses)) return;
+    console.log("Buses Received:", buses);
+
+    if (!Array.isArray(buses) || buses.length === 0) return;
 
     const bounds = L.latLngBounds();
 
     buses.forEach(bus => {
       const tripId = bus.trip_id;
-      const newPos = L.latLng(bus.lat, bus.lon);
-      const heading = bus.heading || 0;
+      const busPos = L.latLng(bus.lat, bus.lon);
+      const icon = bus.has_issue ? issueIcon : normalIcon;
 
-      lastUpdateTime[tripId] = Date.now();
-
+      /* 🚌 Marker */
       if (!markers[tripId]) {
+        markers[tripId] = L.marker(busPos, { icon })
+          .addTo(map)
+          .bindPopup(`
+            <b>🚌 Bus:</b> ${bus.bus}<br>
+            <b>🛣 Route:</b> ${bus.route}<br>
+            <b>👨‍✈ Driver:</b> ${bus.driver}<br>
+          `);
+      } else {
+        markers[tripId].setLatLng(busPos).setIcon(icon);
+      }
 
-        /* Create marker first time */
-        markers[tripId] = L.marker(newPos, {
-          icon: createBusIcon(heading, bus.has_issue)
-        })
-        .addTo(map)
-        .bindPopup(`
-          <b>🚌 Bus:</b> ${bus.bus}<br>
-          <b>🛣 Route:</b> ${bus.route}<br>
-          <b>👨‍✈ Driver:</b> ${bus.driver}
-        `);
-
-        previousPositions[tripId] = newPos;
-
-        /* Create route only once */
+      /* 🛣 Route: BUS → COLLEGE */
+      if (!routeControls[tripId]) {
         routeControls[tripId] = L.Routing.control({
-          waypoints: [newPos, STOP, COLLEGE],
+          waypoints: [busPos,STOP, COLLEGE],
           router: L.Routing.osrmv1({
             serviceUrl: "https://router.project-osrm.org/route/v1"
           }),
@@ -178,29 +128,17 @@ async function loadLiveBuses() {
           draggableWaypoints: false,
           fitSelectedRoutes: false,
           show: false,
-          createMarker: () => null
+          createMarker: () => null   // hide routing markers
         }).addTo(map);
-
       } else {
-
-        /* Smooth animation */
-        animateMarker(markers[tripId], previousPositions[tripId], newPos);
-
-        markers[tripId].setIcon(
-          createBusIcon(heading, bus.has_issue)
-        );
-
-        previousPositions[tripId] = newPos;
-
-        routeControls[tripId].setWaypoints([newPos, STOP, COLLEGE]);
+        routeControls[tripId].setWaypoints([busPos,STOP,COLLEGE]);
       }
 
-      bounds.extend(newPos);
+      bounds.extend(busPos);
       bounds.extend(COLLEGE);
     });
 
-    cleanupInactiveBuses();
-
+    /* 🔍 Auto zoom only once */
     if (firstLoad) {
       map.fitBounds(bounds, { padding: [50, 50] });
       firstLoad = false;
@@ -211,12 +149,11 @@ async function loadLiveBuses() {
   }
 }
 
-/* ================= START REFRESH SYSTEM ================= */
+/* ================= START ================= */
 
 loadLiveBuses();
-setInterval(loadLiveBuses, 4000);
-setInterval(cleanupInactiveBuses, 5000);
-
+setInterval(loadLiveBuses, 5000);
 </script>
+
 </body>
 </html>
