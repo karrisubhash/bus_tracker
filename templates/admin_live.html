@@ -66,7 +66,7 @@ const normalIcon = L.icon({
 
 const issueIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
-  iconSize: [32, 32],
+  iconSize: [50, 50],
   iconAnchor: [16, 16],
 });
 
@@ -75,7 +75,7 @@ const issueIcon = L.icon({
 const markers = {};         // trip_id -> marker
 const routeControls = {};  // trip_id -> routing control
 let firstLoad = true;
-  function animateMarker(marker, newLatLng, duration = 4000) {
+  function animateMarker(marker, newLatLng, duration = 1000) {
   const start = marker.getLatLng();
   const startTime = performance.now();
 
@@ -130,9 +130,20 @@ async function loadLiveBuses() {
             <b>👨‍✈ Driver:</b> ${bus.driver}<br>
           `);
       } else {
-animateMarker(markers[tripId], busPos, 4000);
+animateMarker(markers[tripId], busPos, 1000);
 markers[tripId].setIcon(icon);      }
+// 🔥 Remove buses that are no longer active
+Object.keys(markers).forEach(tripId => {
+  if (!activeTripIds.includes(parseInt(tripId))) {
+    map.removeLayer(markers[tripId]);
+    delete markers[tripId];
 
+    if (routeControls[tripId]) {
+      map.removeControl(routeControls[tripId]);
+      delete routeControls[tripId];
+    }
+  }
+});
       /* 🛣 Route: BUS → COLLEGE */
       if (!routeControls[tripId]) {
         routeControls[tripId] = L.Routing.control({
@@ -171,8 +182,12 @@ markers[tripId].setIcon(icon);      }
 /* ================= START ================= */
 
 loadLiveBuses();
-setInterval(loadLiveBuses, 2000);
-</script>
+async function startLiveUpdates() {
+  await loadLiveBuses();
+  setTimeout(startLiveUpdates, 2000);
+}
+
+startLiveUpdates();</script>
 
 </body>
 </html>
