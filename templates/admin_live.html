@@ -132,18 +132,7 @@ async function loadLiveBuses() {
       } else {
 animateMarker(markers[tripId], busPos, 1000);
 markers[tripId].setIcon(icon);      }
-// 🔥 Remove buses that are no longer active
-Object.keys(markers).forEach(tripId => {
-  if (!activeTripIds.includes(parseInt(tripId))) {
-    map.removeLayer(markers[tripId]);
-    delete markers[tripId];
 
-    if (routeControls[tripId]) {
-      map.removeControl(routeControls[tripId]);
-      delete routeControls[tripId];
-    }
-  }
-});
       /* 🛣 Route: BUS → COLLEGE */
       if (!routeControls[tripId]) {
         routeControls[tripId] = L.Routing.control({
