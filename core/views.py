@@ -332,3 +332,7 @@ def resolve_issue(request, trip_id):
     return Response({"detail": "Issue resolved"})
 def admin_dashboard_view(request):
     return render(request, "admin_dashboard.html")
+from django.shortcuts import render
+
+def driver_page(request):
+    return render(request, "driver.html")
