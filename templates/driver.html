@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bus Driver Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f3f4f6;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      max-width: 420px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      border: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .login { background: #2563eb; }
+    .start { background: #16a34a; }
+    .end { background: #dc2626; }
+
+    .status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <h2>🚌 Driver Panel</h2>
+
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button class="login" onclick="login()">Login</button>
+  </div>
+
+  <!-- TRIP -->
+  <div id="tripBox" style="display:none;">
+    <input id="tripId" placeholder="Trip ID">
+    <button class="start" onclick="startTrip()">Start Trip</button>
+    <button class="end" onclick="endTrip()">End Trip</button>
+  </div>
+
+  <div class="status" id="status">Status: Not Logged In</div>
+
+</div>
+
+<script>
+
+let token = localStorage.getItem("driver_token");
+let watchId = null;
+let locationQueue = JSON.parse(localStorage.getItem("locationQueue")) || [];
+
+/* ================= STATUS ================= */
+
+function setStatus(text, color="black") {
+  const el = document.getElementById("status");
+  el.innerText = "Status: " + text;
+  el.style.color = color;
+}
+
+/* ================= AUTO LOGIN IF TOKEN EXISTS ================= */
+
+if (token) {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("tripBox").style.display = "block";
+  setStatus("Logged In", "green");
+}
+
+/* ================= LOGIN ================= */
+
+async function login() {
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const res = await fetch("/api/token/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (!data.access) {
+      alert("Invalid credentials");
+      return;
+    }
+
+    token = data.access;
+    localStorage.setItem("driver_token", token);
+
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("tripBox").style.display = "block";
+
+    setStatus("Login Successful", "green");
+
+  } catch {
+    setStatus("Login Failed", "red");
+  }
+}
+
+/* ================= SEND LOCATION ================= */
+
+async function sendLocation(tripId, data) {
+
+  if (!navigator.onLine) {
+    locationQueue.push(data);
+    localStorage.setItem("locationQueue", JSON.stringify(locationQueue));
+    setStatus("Offline - Saving Data", "orange");
+    return;
+  }
+
+  try {
+    await fetch(`/api/trips/${tripId}/pings/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
+
+    setStatus("Tracking Live", "green");
+
+  } catch {
+    locationQueue.push(data);
+    localStorage.setItem("locationQueue", JSON.stringify(locationQueue));
+    setStatus("Network Error - Saving", "red");
+  }
+}
+
+/* ================= RESEND QUEUE ================= */
+
+async function flushQueue(tripId) {
+
+  if (!navigator.onLine || locationQueue.length === 0) return;
+
+  for (let data of locationQueue) {
+    await fetch(`/api/trips/${tripId}/pings/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
+  }
+
+  locationQueue = [];
+  localStorage.removeItem("locationQueue");
+}
+
+/* ================= START TRIP ================= */
+
+async function startTrip() {
+
+  const tripId = document.getElementById("tripId").value;
+
+  if (!tripId) {
+    alert("Enter Trip ID");
+    return;
+  }
+
+  // Claim trip
+  await fetch(`/api/trips/${tripId}/claim/`, {
+    method: "POST",
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  watchId = navigator.geolocation.watchPosition(
+    (position) => {
+
+      const data = {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        speed: position.coords.speed || 0,
+        heading: position.coords.heading || 0
+      };
+
+      sendLocation(tripId, data);
+      flushQueue(tripId);
+
+    },
+    (err) => {
+      setStatus("Location Error", "red");
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 5000
+    }
+  );
+
+  setStatus("Trip Started", "blue");
+}
+
+/* ================= END TRIP ================= */
+
+async function endTrip() {
+
+  const tripId = document.getElementById("tripId").value;
+
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+  }
+
+  await fetch(`/api/trips/${tripId}/end/`, {
+    method: "POST",
+    headers: { Authorization: "Bearer " + token }
+  });
+
+  setStatus("Trip Ended", "red");
+}
+
+/* ================= INTERNET EVENTS ================= */
+
+window.addEventListener("offline", () => {
+  setStatus("Internet Lost", "orange");
+});
+
+window.addEventListener("online", () => {
+  setStatus("Internet Restored", "blue");
+});
+
+</script>
+
+</body>
+</html>
