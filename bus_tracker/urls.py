@@ -18,6 +18,7 @@ urlpatterns = [
     path('student-login/', TemplateView.as_view(template_name="student_login.html")),
     path('student-live/', TemplateView.as_view(template_name="student_live.html")),
     
+    path("driver/", TemplateView.as_view(template_name="driver.html")),
 
     # Admin panel pages (ONLY entry points)
     path('admin-panel/login/', TemplateView.as_view(template_name="admin_login.html")),
