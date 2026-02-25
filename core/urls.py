@@ -15,6 +15,7 @@ from .views import (
     admin_ongoing_trips,admin_completed_trips,
     resolve_issue,
     admin_dashboard_view,
+driver_page,
 )
 
 urlpatterns = [
@@ -32,6 +33,7 @@ urlpatterns = [
     path('trips/<int:trip_id>/end/', end_trip),
     path("trips/<int:trip_id>/report-issue/", report_issue),
     path('trips/<int:trip_id>/resolve-issue/', resolve_issue),
+path("driver/", driver_page),
 
     # STUDENT
     path('student/my-bus/', my_bus),
