@@ -7,10 +7,6 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Leaflet Routing Machine -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-
   <style>
     body { margin: 0; font-family: Arial; }
     header {
@@ -30,18 +26,9 @@
 
 <script>
 
-/* ================= CONSTANTS ================= */
-
-// 🎓 College fixed location
-const COLLEGE = L.latLng(17.91925, 83.42445);
-const STOP = L.latLng(17.91984, 83.41716);
-//const STOPs = L.latLng(17.72364, 83.30540);
-
-
 /* ================= AUTH ================= */
 
 const token = localStorage.getItem("admin_token");
-console.log("ADMIN TOKEN:", token);
 
 if (!token) {
   alert("Admin login required");
@@ -50,7 +37,7 @@ if (!token) {
 
 /* ================= MAP ================= */
 
-const map = L.map("map").setView([17.91925, 83.42445],9);
+const map = L.map("map").setView([17.91925, 83.42445], 13);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
@@ -60,22 +47,24 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 const normalIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/174/174237.png",
-  iconSize: [60, 60],
-  iconAnchor: [16, 16],
+  iconSize: [50, 50],
+  iconAnchor: [25, 25],
 });
 
 const issueIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
-  iconSize: [60, 60],
-  iconAnchor: [16, 16],
+  iconSize: [50, 50],
+  iconAnchor: [25, 25],
 });
 
 /* ================= STATE ================= */
 
-const markers = {};         // trip_id -> marker
-const routeControls = {};  // trip_id -> routing control
+const markers = {};
 let firstLoad = true;
-  function animateMarker(marker, newLatLng, duration = 1000) {
+
+/* ================= SMOOTH ANIMATION ================= */
+
+function animateMarker(marker, newLatLng, duration = 800) {
   const start = marker.getLatLng();
   const startTime = performance.now();
 
@@ -109,7 +98,6 @@ async function loadLiveBuses() {
     }
 
     const buses = await res.json();
-    console.log("Buses Received:", buses);
 
     if (!Array.isArray(buses) || buses.length === 0) return;
 
@@ -120,7 +108,6 @@ async function loadLiveBuses() {
       const busPos = L.latLng(bus.lat, bus.lon);
       const icon = bus.has_issue ? issueIcon : normalIcon;
 
-      /* 🚌 Marker */
       if (!markers[tripId]) {
         markers[tripId] = L.marker(busPos, { icon })
           .addTo(map)
@@ -130,34 +117,13 @@ async function loadLiveBuses() {
             <b>👨‍✈ Driver:</b> ${bus.driver}<br>
           `);
       } else {
-animateMarker(markers[tripId], busPos, 1000);
-markers[tripId].setIcon(icon);      }
-
-      /* 🛣 Route: BUS → COLLEGE */
-      if (!routeControls[tripId]) {
-        routeControls[tripId] = L.Routing.control({
-          waypoints: [busPos,STOP, COLLEGE],
-          router: L.Routing.osrmv1({
-            serviceUrl: "https://router.project-osrm.org/route/v1"
-          }),
-          lineOptions: {
-            styles: [{ color: "#2563eb", weight: 5 }]
-          },
-          addWaypoints: false,
-          draggableWaypoints: false,
-          fitSelectedRoutes: false,
-          show: false,
-          createMarker: () => null   // hide routing markers
-        }).addTo(map);
-      } else {
-        routeControls[tripId].setWaypoints([busPos,STOP,COLLEGE]);
+        animateMarker(markers[tripId], busPos);
+        markers[tripId].setIcon(icon);
       }
 
       bounds.extend(busPos);
-      bounds.extend(COLLEGE);
     });
 
-    /* 🔍 Auto zoom only once */
     if (firstLoad) {
       map.fitBounds(bounds, { padding: [50, 50] });
       firstLoad = false;
@@ -168,15 +134,16 @@ markers[tripId].setIcon(icon);      }
   }
 }
 
-/* ================= START ================= */
+/* ================= AUTO UPDATE ================= */
 
-loadLiveBuses();
 async function startLiveUpdates() {
   await loadLiveBuses();
   setTimeout(startLiveUpdates, 2000);
 }
 
-startLiveUpdates();</script>
+startLiveUpdates();
+
+</script>
 
 </body>
-</html>
+</
