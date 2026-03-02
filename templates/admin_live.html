@@ -26,13 +26,17 @@
 
 <script>
 
+/* ================= CONFIG ================= */
+
+const BASE_URL = "https://college-bus-tracking-system-ri73.onrender.com";
+
 /* ================= AUTH ================= */
 
 const token = localStorage.getItem("admin_token");
 
 if (!token) {
   alert("Admin login required");
-  window.location.href = "/admin/login/";
+  window.location.href = "/admin-panel/login/";
 }
 
 /* ================= MAP ================= */
@@ -88,9 +92,14 @@ function animateMarker(marker, newLatLng, duration = 800) {
 
 async function loadLiveBuses() {
   try {
-    const res = await fetch("/api/admin/live-locations/", {
-      headers: { Authorization: "Bearer " + token }
-    });
+
+    const res = await fetch(
+      BASE_URL + "/api/admin/live-locations/?t=" + Date.now(),
+      {
+        headers: { Authorization: "Bearer " + token },
+        cache: "no-store"
+      }
+    );
 
     if (!res.ok) {
       console.error("API error:", res.status);
@@ -104,11 +113,13 @@ async function loadLiveBuses() {
     const bounds = L.latLngBounds();
 
     buses.forEach(bus => {
+
       const tripId = bus.trip_id;
       const busPos = L.latLng(bus.lat, bus.lon);
       const icon = bus.has_issue ? issueIcon : normalIcon;
 
       if (!markers[tripId]) {
+
         markers[tripId] = L.marker(busPos, { icon })
           .addTo(map)
           .bindPopup(`
@@ -116,12 +127,16 @@ async function loadLiveBuses() {
             <b>🛣 Route:</b> ${bus.route}<br>
             <b>👨‍✈ Driver:</b> ${bus.driver}<br>
           `);
+
       } else {
+
         animateMarker(markers[tripId], busPos);
         markers[tripId].setIcon(icon);
+
       }
 
       bounds.extend(busPos);
+
     });
 
     if (firstLoad) {
@@ -136,8 +151,8 @@ async function loadLiveBuses() {
 
 /* ================= AUTO UPDATE ================= */
 
-async function startLiveUpdates() {
-  await loadLiveBuses();
+function startLiveUpdates() {
+  loadLiveBuses();
   setTimeout(startLiveUpdates, 2000);
 }
 
@@ -146,4 +161,4 @@ startLiveUpdates();
 </script>
 
 </body>
-</
+</html>
