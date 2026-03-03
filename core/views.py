@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.db.models import OuterRef, Subquery
 
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -224,21 +225,25 @@ def admin_all_trips(request):
 # ======================================================
 # ADMIN: LIVE MAP (ALL ONGOING BUSES)
 # ======================================================
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdmin])
 def admin_live_locations(request):
-    trips = Trip.objects.filter(status="ongoing").select_related(
-        "bus", "route", "driver"
-    )
+
+    latest_ping = LocationPing.objects.filter(
+        trip=OuterRef('pk')
+    ).order_by('-timestamp')
+
+    trips = Trip.objects.filter(status="ongoing").annotate(
+        latest_lat=Subquery(latest_ping.values('lat')[:1]),
+        latest_lon=Subquery(latest_ping.values('lon')[:1])
+    ).select_related("bus", "route", "driver")
 
     result = []
 
     for trip in trips:
-        ping = LocationPing.objects.filter(
-            trip=trip
-        ).order_by("-timestamp").first()
-
-        if not ping:
+        if trip.latest_lat is None:
             continue
 
         result.append({
@@ -246,13 +251,12 @@ def admin_live_locations(request):
             "bus": trip.bus.registration_no,
             "route": trip.route.name if trip.route else "",
             "driver": trip.driver.username if trip.driver else "",
-            "lat": ping.lat,
-            "lon": ping.lon,
+            "lat": trip.latest_lat,
+            "lon": trip.latest_lon,
             "has_issue": trip.has_issue,
         })
 
     return Response(result)
-
 # ======================================================
 # ADMIN: ONGOING TRIPS (SUMMARY TABLE)
 # ======================================================
