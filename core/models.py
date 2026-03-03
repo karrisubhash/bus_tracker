@@ -92,20 +92,16 @@ class Trip(models.Model):
 
 
 # ===================== LOCATION PING =====================
-
 class LocationPing(models.Model):
-    trip = models.ForeignKey(
-        Trip,
-        on_delete=models.CASCADE,
-        related_name='pings'
-    )
-
-    timestamp = models.DateTimeField(auto_now_add=True)
+    trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="pings")
     lat = models.FloatField()
     lon = models.FloatField()
-    speed = models.FloatField(null=True, blank=True)
-    heading = models.FloatField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["trip", "-timestamp"]),
+        ]
     class Meta:
         ordering = ['-timestamp']
 
