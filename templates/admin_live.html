@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin – Live Bus Monitoring</title>
+<title>Admin – Live Bus Monitoring</title>
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <style>
-    body { margin: 0; font-family: Arial; }
-    header {
-      background: #0f172a;
-      color: white;
-      padding: 12px 18px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    #map { height: calc(100vh - 50px); }
-  </style>
+<style>
+body{margin:0;font-family:Arial}
+header{
+background:#0f172a;
+color:white;
+padding:12px 18px;
+font-size:18px;
+font-weight:bold
+}
+#map{height:calc(100vh - 50px)}
+</style>
 </head>
+
 <body>
 
 <header>🛠 Admin Live Bus Monitoring</header>
@@ -28,135 +28,150 @@
 
 /* ================= CONFIG ================= */
 
-const BASE_URL = "https://college-bus-tracking-system-ri73.onrender.com";
+const BASE_URL="https://college-bus-tracking-system-ri73.onrender.com";
 
 /* ================= AUTH ================= */
 
-const token = localStorage.getItem("admin_token");
+const token=localStorage.getItem("admin_token");
 
-if (!token) {
-  alert("Admin login required");
-  window.location.href = "/admin-panel/login/";
+if(!token){
+alert("Admin login required");
+window.location.href="/admin-panel/login/";
 }
 
 /* ================= MAP ================= */
 
-const map = L.map("map").setView([17.91925, 83.42445], 13);
+const map=L.map("map").setView([17.91925,83.42445],13);
 
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{attribution:"© OpenStreetMap"}
+).addTo(map);
 
 /* ================= ICONS ================= */
 
-const normalIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/174/174237.png",
-  iconSize: [50, 50],
-  iconAnchor: [25, 25],
+const normalIcon=L.icon({
+iconUrl:"https://cdn-icons-png.flaticon.com/512/684/684908.png",
+iconSize:[45,45],
+iconAnchor:[22,22]
 });
 
-const issueIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
-  iconSize: [50, 50],
-  iconAnchor: [25, 25],
+const issueIcon=L.icon({
+iconUrl:"https://cdn-icons-png.flaticon.com/512/564/564619.png",
+iconSize:[45,45],
+iconAnchor:[22,22]
 });
 
 /* ================= STATE ================= */
 
-const markers = {};
-let firstLoad = true;
+const markers={};
+let firstLoad=true;
 
 /* ================= SMOOTH ANIMATION ================= */
 
-function animateMarker(marker, newLatLng, duration = 800) {
-  const start = marker.getLatLng();
-  const startTime = performance.now();
+function animateMarker(marker,newPos,duration=1000){
 
-  function animate(time) {
-    const progress = Math.min((time - startTime) / duration, 1);
+const start=marker.getLatLng();
+const startTime=performance.now();
 
-    const lat = start.lat + (newLatLng.lat - start.lat) * progress;
-    const lng = start.lng + (newLatLng.lng - start.lng) * progress;
+function animate(time){
 
-    marker.setLatLng([lat, lng]);
+const progress=Math.min((time-startTime)/duration,1);
 
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    }
-  }
+const lat=start.lat+(newPos.lat-start.lat)*progress;
+const lng=start.lng+(newPos.lng-start.lng)*progress;
 
-  requestAnimationFrame(animate);
+marker.setLatLng([lat,lng]);
+
+if(progress<1){
+requestAnimationFrame(animate);
+}
+
+}
+
+requestAnimationFrame(animate);
+
 }
 
 /* ================= LOAD LIVE BUSES ================= */
 
-async function loadLiveBuses() {
-  try {
+async function loadLiveBuses(){
 
-    const res = await fetch(
-      BASE_URL + "/api/admin/live-locations/?t=" + Date.now(),
-      {
-        headers: { Authorization: "Bearer " + token },
-        cache: "no-store"
-      }
-    );
+try{
 
-    if (!res.ok) {
-      console.error("API error:", res.status);
-      return;
-    }
+const res=await fetch(
+BASE_URL+"/api/admin/live-locations/?t="+Date.now(),
+{
+headers:{Authorization:"Bearer "+token},
+cache:"no-store"
+}
+);
 
-    const buses = await res.json();
+if(!res.ok){
+console.log("API ERROR",res.status);
+return;
+}
 
-    if (!Array.isArray(buses) || buses.length === 0) return;
+const buses=await res.json();
 
-    const bounds = L.latLngBounds();
+if(!Array.isArray(buses)) return;
 
-    buses.forEach(bus => {
+const bounds=L.latLngBounds();
 
-      const tripId = bus.trip_id;
-      const busPos = L.latLng(bus.lat, bus.lon);
-      const icon = bus.has_issue ? issueIcon : normalIcon;
+buses.forEach(bus=>{
 
-      if (!markers[tripId]) {
+const tripId=bus.trip_id;
 
-        markers[tripId] = L.marker(busPos, { icon })
-          .addTo(map)
-          .bindPopup(`
-            <b>🚌 Bus:</b> ${bus.bus}<br>
-            <b>🛣 Route:</b> ${bus.route}<br>
-            <b>👨‍✈ Driver:</b> ${bus.driver}<br>
-          `);
+/* FORCE NUMBERS (IMPORTANT FIX) */
 
-      } else {
+const lat=parseFloat(bus.lat);
+const lon=parseFloat(bus.lon);
 
-        animateMarker(markers[tripId], busPos);
-        markers[tripId].setIcon(icon);
+const busPos=L.latLng(lat,lon);
 
-      }
+const icon=bus.has_issue?issueIcon:normalIcon;
 
-      bounds.extend(busPos);
+if(!markers[tripId]){
 
-    });
+markers[tripId]=L.marker(busPos,{icon})
+.addTo(map)
+.bindPopup(`
+<b>Bus:</b> ${bus.bus}<br>
+<b>Route:</b> ${bus.route}<br>
+<b>Driver:</b> ${bus.driver}
+`);
 
-    if (firstLoad) {
-      map.fitBounds(bounds, { padding: [50, 50] });
-      firstLoad = false;
-    }
+}else{
 
-  } catch (err) {
-    console.error("Live map error:", err);
-  }
+animateMarker(markers[tripId],busPos);
+markers[tripId].setIcon(icon);
+
+}
+
+bounds.extend(busPos);
+
+});
+
+/* zoom only first time */
+
+if(firstLoad && bounds.isValid()){
+map.fitBounds(bounds,{padding:[50,50]});
+firstLoad=false;
+}
+
+}catch(err){
+console.log("MAP ERROR",err);
+}
+
 }
 
 /* ================= AUTO UPDATE ================= */
 
-function startLiveUpdates() {
-  loadLiveBuses();
-  setTimeout(startLiveUpdates, 2000);
-}
+setInterval(loadLiveBuses,2000);
 
-startLiveUpdates();
+/* first load */
+
+loadLiveBuses();
 
 </script>
 
