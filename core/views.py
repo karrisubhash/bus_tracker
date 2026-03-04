@@ -231,19 +231,19 @@ def admin_all_trips(request):
 @permission_classes([IsAuthenticated, IsAdmin])
 def admin_live_locations(request):
 
-    latest_ping = LocationPing.objects.filter(
-        trip=OuterRef('pk')
-    ).order_by('-timestamp')
-
-    trips = Trip.objects.filter(status="ongoing").annotate(
-        latest_lat=Subquery(latest_ping.values('lat')[:1]),
-        latest_lon=Subquery(latest_ping.values('lon')[:1])
-    ).select_related("bus", "route", "driver")
+    trips = Trip.objects.filter(status="ongoing").select_related(
+        "bus", "route", "driver"
+    )
 
     result = []
 
     for trip in trips:
-        if trip.latest_lat is None:
+
+        ping = LocationPing.objects.filter(
+            trip=trip
+        ).order_by("-timestamp").first()
+
+        if not ping:
             continue
 
         result.append({
@@ -251,8 +251,8 @@ def admin_live_locations(request):
             "bus": trip.bus.registration_no,
             "route": trip.route.name if trip.route else "",
             "driver": trip.driver.username if trip.driver else "",
-            "lat": trip.latest_lat,
-            "lon": trip.latest_lon,
+            "lat": ping.lat,
+            "lon": ping.lon,
             "has_issue": trip.has_issue,
         })
 
