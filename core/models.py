@@ -99,11 +99,12 @@ class LocationPing(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        ordering = ['-timestamp']
+
         indexes = [
             models.Index(fields=["trip", "-timestamp"]),
         ]
-    class Meta:
-        ordering = ['-timestamp']
+    
 
     def __str__(self):
         return f"Ping {self.id} — Trip {self.trip_id}"
