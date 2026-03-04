@@ -46,5 +46,5 @@ class TripSerializer(serializers.ModelSerializer):
 class LocationPingSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocationPing
-        fields = ('id','lat','lon','speed','heading','timestamp')
+        fields = ('id','lat','lon','timestamp')
         read_only_fields = ('id','timestamp',)
