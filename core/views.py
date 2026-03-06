@@ -243,7 +243,6 @@ def admin_all_trips(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdmin])
 def admin_live_locations(request):
 
     trips = Trip.objects.filter(status="ongoing").select_related(
