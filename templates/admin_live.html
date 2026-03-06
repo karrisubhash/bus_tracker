@@ -1,141 +1,149 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
-<title>Admin – Live Bus Monitoring</title>
+<title>Admin – Live Bus Monitoring</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+}
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<style>
-body{margin:0;font-family:Arial}
 header{
 background:#0f172a;
 color:white;
 padding:12px 18px;
 font-size:18px;
-font-weight:bold
-}
-#map{height:calc(100vh - 50px)}
-</style>
-</head>
-
-<body>
-
-<header>🛠 Admin Live Bus Monitoring</header>
-<div id="map"></div>
-
-<script>
-
-const BASE_URL="https://college-bus-tracking-system-ri73.onrender.com";
-const token=localStorage.getItem("admin_token");
-
-if(!token){
-alert("Admin login required");
-window.location.href="/admin-panel/login/";
+font-weight:bold;
 }
 
-const map=L.map("map").setView([17.91925,83.42445],13);
+#map{
+height:calc(100vh - 50px);
+}
+</style></head>
+<body><header>🛠 Admin Live Bus Monitoring</header><div id="map"></div><script>
+
+/* ================= MAP ================= */
+
+const map = L.map("map").setView([17.91925,83.42445],13);
 
 L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{attribution:"© OpenStreetMap"}
+{ attribution: "© OpenStreetMap contributors" }
 ).addTo(map);
 
-const markers={}
-const routes={}
+/* ================= BUS ICON ================= */
 
-const busIcon=L.icon({
+const busIcon = L.icon({
 iconUrl:"https://cdn-icons-png.flaticon.com/512/684/684908.png",
-iconSize:[45,45],
-iconAnchor:[22,22]
-})
+iconSize:[40,40],
+iconAnchor:[20,20]
+});
+
+/* ================= STATE ================= */
+
+const markers = {};
+const polylines = {};
+
+/* ================= SMOOTH ANIMATION ================= */
 
 function animateMarker(marker,newPos,duration=1000){
 
-const start=marker.getLatLng()
-const startTime=performance.now()
+const start = marker.getLatLng();
+const startTime = performance.now();
 
 function animate(time){
 
-const progress=Math.min((time-startTime)/duration,1)
+const progress = Math.min((time-startTime)/duration,1);
 
-const lat=start.lat+(newPos.lat-start.lat)*progress
-const lng=start.lng+(newPos.lng-start.lng)*progress
+const lat = start.lat + (newPos.lat-start.lat)*progress;
+const lng = start.lng + (newPos.lng-start.lng)*progress;
 
-marker.setLatLng([lat,lng])
+marker.setLatLng([lat,lng]);
 
 if(progress<1){
-requestAnimationFrame(animate)
+requestAnimationFrame(animate);
 }
 
 }
 
-requestAnimationFrame(animate)
+requestAnimationFrame(animate);
 
 }
 
-async function loadLiveBuses(){
+/* ================= WEBSOCKET ================= */
 
-try{
+function connectSocket(){
 
-const res=await fetch(
-BASE_URL+"/api/admin/live-locations/?t="+Date.now(),
-{
-headers:{Authorization:"Bearer "+token},
-cache:"no-store"
-}
-)
+const protocol = location.protocol === "https:" ? "wss" : "ws";
 
-if(!res.ok) return
+const socket = new WebSocket(
+protocol + "://" + location.host + "/ws/bus/"
+);
 
-const buses=await res.json()
+/* ===== CONNECTED ===== */
 
-if(!Array.isArray(buses)) return
+socket.onopen = function(){
+console.log("WebSocket Connected");
+};
 
-buses.forEach(bus=>{
+/* ===== RECEIVE DATA ===== */
 
-const tripId=bus.trip_id
-const lat=parseFloat(bus.lat)
-const lon=parseFloat(bus.lon)
+socket.onmessage = function(event){
 
-const pos=L.latLng(lat,lon)
+const data = JSON.parse(event.data);
+
+const tripId = data.trip_id;
+const lat = data.lat;
+const lon = data.lon;
+
+const position = L.latLng(lat,lon);
+
+/* ===== CREATE MARKER ===== */
 
 if(!markers[tripId]){
 
-markers[tripId]=L.marker(pos,{icon:busIcon})
+markers[tripId] = L.marker(position,{icon:busIcon})
 .addTo(map)
-.bindPopup(
-`Bus: ${bus.bus}<br>
-Route: ${bus.route}<br>
-Driver: ${bus.driver}`
-)
+.bindPopup("Bus ID: "+tripId);
 
-routes[tripId]=L.polyline([pos],{
-color:"#2563eb",
+polylines[tripId] = L.polyline([position],{
+color:"blue",
 weight:5
-}).addTo(map)
+}).addTo(map);
 
-}else{
-
-animateMarker(markers[tripId],pos)
-
-routes[tripId].addLatLng(pos)
+map.setView(position,15);
 
 }
 
-})
+/* ===== MOVE MARKER ===== */
 
-}catch(err){
-console.log(err)
+else{
+
+animateMarker(markers[tripId],position);
+
 }
 
+/* ===== UPDATE ROUTE ===== */
+
+polylines[tripId].addLatLng(position);
+
+};
+
+/* ===== ERROR ===== */
+
+socket.onerror = function(error){
+console.log("WebSocket Error:",error);
+};
+
+/* ===== RECONNECT ===== */
+
+socket.onclose = function(){
+console.log("WebSocket Closed... reconnecting");
+setTimeout(connectSocket,2000);
+};
+
 }
 
-setInterval(loadLiveBuses,2000)
+connectSocket();
 
-loadLiveBuses()
-
-</script>
-
-</body>
+</script></body>
 </html>
