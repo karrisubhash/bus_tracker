@@ -1,10 +1,17 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
-<title>Admin – Live Bus Monitoring</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
+<title>Admin – Live Bus Tracking</title>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
 body{
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial;
 }
 
 header{
@@ -18,8 +25,16 @@ font-weight:bold;
 #map{
 height:calc(100vh - 50px);
 }
-</style></head>
-<body><header>🛠 Admin Live Bus Monitoring</header><div id="map"></div><script>
+</style>
+
+</head>
+<body>
+
+<header>🚌 College Bus Live Monitoring</header>
+
+<div id="map"></div>
+
+<script>
 
 /* ================= MAP ================= */
 
@@ -27,35 +42,53 @@ const map = L.map("map").setView([17.91925,83.42445],13);
 
 L.tileLayer(
 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{ attribution: "© OpenStreetMap contributors" }
-).addTo(map);
+{
+attribution:"© OpenStreetMap"
+}).addTo(map);
 
-/* ================= BUS ICON ================= */
+
+/* ================= ICONS ================= */
 
 const busIcon = L.icon({
-iconUrl:"https://cdn-icons-png.flaticon.com/512/684/684908.png",
+iconUrl:"https://cdn-icons-png.flaticon.com/512/174/174237.png",
 iconSize:[40,40],
 iconAnchor:[20,20]
 });
 
+const issueIcon = L.icon({
+iconUrl:"https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
+iconSize:[40,40],
+iconAnchor:[20,20]
+});
+
+
 /* ================= STATE ================= */
 
-const markers = {};
-const polylines = {};
+let markers = {};
+let polylines = {};
 
-/* ================= SMOOTH ANIMATION ================= */
 
-function animateMarker(marker,newPos,duration=1000){
+/* ================= SMOOTH MOVE ================= */
+
+function animateMarker(marker,newLatLng,duration=1000){
 
 const start = marker.getLatLng();
 const startTime = performance.now();
 
 function animate(time){
 
-const progress = Math.min((time-startTime)/duration,1);
+const progress = Math.min(
+(time-startTime)/duration,
+1
+);
 
-const lat = start.lat + (newPos.lat-start.lat)*progress;
-const lng = start.lng + (newPos.lng-start.lng)*progress;
+const lat =
+start.lat +
+(newLatLng.lat-start.lat)*progress;
+
+const lng =
+start.lng +
+(newLatLng.lng-start.lng)*progress;
 
 marker.setLatLng([lat,lng]);
 
@@ -69,81 +102,98 @@ requestAnimationFrame(animate);
 
 }
 
+
 /* ================= WEBSOCKET ================= */
 
-function connectSocket(){
-
-const protocol = location.protocol === "https:" ? "wss" : "ws";
-
 const socket = new WebSocket(
-protocol + "://" + location.host + "/ws/bus/"
+"wss://"+window.location.host+"/ws/bus/"
 );
 
-/* ===== CONNECTED ===== */
 
 socket.onopen = function(){
 console.log("WebSocket Connected");
 };
 
-/* ===== RECEIVE DATA ===== */
 
 socket.onmessage = function(event){
 
 const data = JSON.parse(event.data);
 
+console.log("Bus Update:",data);
+
+
 const tripId = data.trip_id;
 const lat = data.lat;
 const lon = data.lon;
 
-const position = L.latLng(lat,lon);
+const position = [lat,lon];
 
-/* ===== CREATE MARKER ===== */
+const icon = data.has_issue
+? issueIcon
+: busIcon;
+
+
+/* ================= MARKER ================= */
 
 if(!markers[tripId]){
 
-markers[tripId] = L.marker(position,{icon:busIcon})
+markers[tripId] =
+L.marker(position,{icon:icon})
 .addTo(map)
-.bindPopup("Bus ID: "+tripId);
-
-polylines[tripId] = L.polyline([position],{
-color:"blue",
-weight:5
-}).addTo(map);
-
-map.setView(position,15);
+.bindPopup(
+"<b>Bus:</b> "+data.bus+
+"<br><b>Driver:</b> "+data.driver+
+"<br><b>Route:</b> "+data.route
+);
 
 }
-
-/* ===== MOVE MARKER ===== */
-
 else{
 
-animateMarker(markers[tripId],position);
+animateMarker(
+markers[tripId],
+L.latLng(lat,lon)
+);
+
+markers[tripId].setIcon(icon);
 
 }
 
-/* ===== UPDATE ROUTE ===== */
+
+/* ================= ROUTE LINE ================= */
+
+if(!polylines[tripId]){
+
+polylines[tripId] =
+L.polyline([position],
+{
+color:"blue",
+weight:4
+}).addTo(map);
+
+}
+else{
 
 polylines[tripId].addLatLng(position);
 
-};
-
-/* ===== ERROR ===== */
-
-socket.onerror = function(error){
-console.log("WebSocket Error:",error);
-};
-
-/* ===== RECONNECT ===== */
-
-socket.onclose = function(){
-console.log("WebSocket Closed... reconnecting");
-setTimeout(connectSocket,2000);
-};
-
 }
 
-connectSocket();
+};
 
-</script></body>
+
+socket.onclose = function(){
+
+console.log("WebSocket Closed");
+setTimeout(connectSocket,3000);
+
+};
+
+
+socket.onerror = function(e){
+console.log("WebSocket Error",e);
+};
+
+
+</script>
+
+</body>
 </html>
