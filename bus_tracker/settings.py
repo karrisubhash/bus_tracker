@@ -180,12 +180,16 @@ SIMPLE_JWT = {
 # =====================================================
 # CHANNELS (WebSocket Support)
 # =====================================================
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG":{
-            "hosts":[os.environ.get("redis://red-d6le84f5r7bs73987r40:6379")],
-    },
+        "CONFIG": {
+            "hosts": [
+                os.environ.get(
+                    "REDIS_URL",
+                    "redis://localhost:6379"
+                )
+            ],
+        },
     },
 }
