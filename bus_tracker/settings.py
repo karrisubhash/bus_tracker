@@ -183,7 +183,7 @@ SIMPLE_JWT = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_resis.core.RedisChannelLayer",
         "CONFIG":{
             "hosts":[os.environ.get("redis://red-d6le84f5r7bs73987r40:6379")],
     },
