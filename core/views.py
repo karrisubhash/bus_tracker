@@ -50,7 +50,6 @@ class TripListView(generics.ListAPIView):
 # ======================================================
 # DRIVER: SEND LOCATION PINGS
 # ======================================================
-
 class LocationPingCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -64,32 +63,27 @@ class LocationPingCreateView(APIView):
         data["trip"] = trip_id
 
         serializer = LocationPingSerializer(data=data)
-serializer.is_valid(raise_exception=True)
-ping = serializer.save(trip=trip)
+        serializer.is_valid(raise_exception=True)
+        ping = serializer.save(trip=trip)
 
-# ==============================
-# SEND LOCATION TO WEBSOCKET
-# ==============================
+        # Send to WebSocket
+        channel_layer = get_channel_layer()
 
-channel_layer = get_channel_layer()
-
-async_to_sync(channel_layer.group_send)(
-    "bus_locations",
-    {
-        "type": "bus_location",
-        "trip_id": trip.id,
-        "lat": ping.lat,
-        "lon": ping.lon,
-        "bus": trip.bus.registration_no,
-        "driver": trip.driver.username if trip.driver else "",
-        "route": trip.route.name if trip.route else "",
-        "has_issue": trip.has_issue
-    }
-)
+        async_to_sync(channel_layer.group_send)(
+            "bus_locations",
+            {
+                "type": "bus_location",
+                "trip_id": trip.id,
+                "lat": ping.lat,
+                "lon": ping.lon,
+                "bus": trip.bus.registration_no,
+                "driver": trip.driver.username if trip.driver else "",
+                "route": trip.route.name if trip.route else "",
+                "has_issue": trip.has_issue
+            }
+        )
 
         return Response(serializer.data, status=201)
-
-
 # ======================================================
 # DRIVER: CLAIM TRIP
 # ======================================================
