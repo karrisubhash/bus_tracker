@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.db.models import OuterRef, Subquery
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -63,8 +64,28 @@ class LocationPingCreateView(APIView):
         data["trip"] = trip_id
 
         serializer = LocationPingSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(trip=trip)
+serializer.is_valid(raise_exception=True)
+ping = serializer.save(trip=trip)
+
+# ==============================
+# SEND LOCATION TO WEBSOCKET
+# ==============================
+
+channel_layer = get_channel_layer()
+
+async_to_sync(channel_layer.group_send)(
+    "bus_locations",
+    {
+        "type": "bus_location",
+        "trip_id": trip.id,
+        "lat": ping.lat,
+        "lon": ping.lon,
+        "bus": trip.bus.registration_no,
+        "driver": trip.driver.username if trip.driver else "",
+        "route": trip.route.name if trip.route else "",
+        "has_issue": trip.has_issue
+    }
+)
 
         return Response(serializer.data, status=201)
 
@@ -340,3 +361,4 @@ from django.shortcuts import render
 
 def driver_page(request):
     return render(request, "driver.html")
+    from channels.layers import get_channel_layer
