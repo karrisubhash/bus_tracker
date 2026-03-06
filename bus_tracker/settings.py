@@ -187,5 +187,5 @@ CHANNEL_LAYERS = {
         "CONFIG":{
             "hosts":[os.environ.get("redis://red-d6le84f5r7bs73987r40:6379")],
     },
-    };
+    },
 }
