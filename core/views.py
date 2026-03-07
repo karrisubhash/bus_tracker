@@ -246,14 +246,17 @@ def admin_live_locations(request):
     trips = Trip.objects.filter(
         status="ongoing",
         current_lat__isnull=False
-    )
+    ).select_related("bus", "route", "driver")
 
     data = []
 
     for trip in trips:
+
         data.append({
             "trip_id": trip.id,
-            "bus": trip.bus.registration_no,
+            "bus": trip.bus.registration_no if trip.bus else None,
+            "route": trip.route.name if trip.route else None,
+            "driver": trip.driver.username if trip.driver else None,
             "lat": trip.current_lat,
             "lon": trip.current_lon
         })
