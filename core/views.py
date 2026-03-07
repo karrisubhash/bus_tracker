@@ -241,36 +241,26 @@ def admin_all_trips(request):
 # ADMIN: LIVE MAP (ALL ONGOING BUSES)
 # ======================================================
 from django.db import connection
-
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([])
 def admin_live_locations(request):
 
-    connection.close_if_unusable_or_obsolete()
+    trips = Trip.objects.filter(
+        status="ongoing",
+        current_lat__isnull=False
+    )
 
-    trips = Trip.objects.select_related("bus","route","driver")
-
-    result = []
+    data = []
 
     for trip in trips:
-        ping = (
-            LocationPing.objects
-            .filter(trip=trip)
-            .order_by("-timestamp")
-            .first()
-        )
-
-        if not ping:
-            continue
-
-        result.append({
+        data.append({
             "trip_id": trip.id,
             "bus": trip.bus.registration_no,
-            "lat": ping.lat,
-            "lon": ping.lon,
+            "lat": trip.current_lat,
+            "lon": trip.current_lon
         })
 
-    return Response(result)
+    return Response(data)
 # ======================================================
 # ADMIN: ONGOING TRIPS (SUMMARY TABLE)
 # ======================================================
