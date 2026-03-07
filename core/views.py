@@ -50,10 +50,13 @@ class TripListView(generics.ListAPIView):
 # ======================================================
 # DRIVER: SEND LOCATION PINGS
 # ======================================================
+from django.utils import timezone
+
 class LocationPingCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, trip_id):
+
         trip = get_object_or_404(Trip, id=trip_id)
 
         if request.user.role != "driver" or trip.driver != request.user:
@@ -64,27 +67,22 @@ class LocationPingCreateView(APIView):
 
         serializer = LocationPingSerializer(data=data)
         serializer.is_valid(raise_exception=True)
+
+        # Save ping history
         ping = serializer.save(trip=trip)
 
-        # Send to WebSocket
-        channel_layer = get_channel_layer()
+        # 🚀 UPDATE CURRENT BUS LOCATION
+        trip.current_lat = ping.lat
+        trip.current_lon = ping.lon
+        trip.last_ping = timezone.now()
 
-        async_to_sync(channel_layer.group_send)(
-            "bus_locations",
-            {
-                "type": "bus_location",
-                "trip_id": trip.id,
-                "lat": ping.lat,
-                "lon": ping.lon,
-                "bus": trip.bus.registration_no,
-                "driver": trip.driver.username if trip.driver else "",
-                "route": trip.route.name if trip.route else "",
-                "has_issue": trip.has_issue
-            }
-        )
+        trip.save(update_fields=[
+            "current_lat",
+            "current_lon",
+            "last_ping"
+        ])
 
-        return Response(serializer.data, status=201)
-# ======================================================
+        return Response(serializer.data, status=201)# ======================================================
 # DRIVER: CLAIM TRIP
 # ======================================================
 
