@@ -240,22 +240,25 @@ def admin_all_trips(request):
 # ======================================================
 # ADMIN: LIVE MAP (ALL ONGOING BUSES)
 # ======================================================
-
+from django.db import connection
 
 @api_view(['GET'])
+@permission_classes([])
 def admin_live_locations(request):
 
-    trips = Trip.objects.filter(status="ongoing").select_related(
-        "bus", "route", "driver"
-    )
+    connection.close_if_unusable_or_obsolete()
+
+    trips = Trip.objects.select_related("bus","route","driver")
 
     result = []
 
     for trip in trips:
-
-        ping = LocationPing.objects.filter(
-            trip=trip
-        ).order_by("-timestamp").first()
+        ping = (
+            LocationPing.objects
+            .filter(trip=trip)
+            .order_by("-timestamp")
+            .first()
+        )
 
         if not ping:
             continue
@@ -263,11 +266,8 @@ def admin_live_locations(request):
         result.append({
             "trip_id": trip.id,
             "bus": trip.bus.registration_no,
-            "route": trip.route.name if trip.route else "",
-            "driver": trip.driver.username if trip.driver else "",
             "lat": ping.lat,
             "lon": ping.lon,
-            "has_issue": trip.has_issue,
         })
 
     return Response(result)
