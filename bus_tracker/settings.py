@@ -104,15 +104,16 @@ ASGI_APPLICATION = 'bus_tracker.asgi.application'
 # =====================================================
 # DATABASE
 # =====================================================
-
 DATABASES = {
-    
-        'default': dj_database_url.config(
+    "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=True),
-    }
+        ssl_require=True
+    )
+}
 
+# ADD THIS LINE BELOW
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 # =====================================================
 # AUTH
