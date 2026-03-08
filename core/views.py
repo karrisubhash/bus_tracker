@@ -51,12 +51,10 @@ class TripListView(generics.ListAPIView):
 # DRIVER: SEND LOCATION PINGS
 # ======================================================
 from django.utils import timezone
-
 class LocationPingCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, trip_id):
-
         trip = get_object_or_404(Trip, id=trip_id)
 
         if request.user.role != "driver" or trip.driver != request.user:
@@ -67,22 +65,27 @@ class LocationPingCreateView(APIView):
 
         serializer = LocationPingSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-
-        # Save ping history
         ping = serializer.save(trip=trip)
 
-        # 🚀 UPDATE CURRENT BUS LOCATION
-        trip.current_lat = ping.lat
-        trip.current_lon = ping.lon
-        trip.last_ping = timezone.now()
+        # Send to WebSocket
+        channel_layer = get_channel_layer()
 
-        trip.save(update_fields=[
-            "current_lat",
-            "current_lon",
-            "last_ping"
-        ])
+        async_to_sync(channel_layer.group_send)(
+            "bus_locations",
+            {
+                "type": "bus_location",
+                "trip_id": trip.id,
+                "lat": ping.lat,
+                "lon": ping.lon,
+                "bus": trip.bus.registration_no,
+                "driver": trip.driver.username if trip.driver else "",
+                "route": trip.route.name if trip.route else "",
+                "has_issue": trip.has_issue
+            }
+        )
 
-        return Response(serializer.data, status=201)# ======================================================
+        return Response(serializer.data, status=201)
+        # ======================================================
 # DRIVER: CLAIM TRIP
 # ======================================================
 
@@ -243,26 +246,32 @@ from django.db import connection
 @permission_classes([])
 def admin_live_locations(request):
 
-    trips = Trip.objects.filter(
-        status="ongoing",
-        current_lat__isnull=False
-    ).select_related("bus", "route", "driver")
+    trips = Trip.objects.filter(status="ongoing").select_related(
+        "bus", "route", "driver"
+    )
 
-    data = []
+    result = []
 
     for trip in trips:
 
-        data.append({
+        ping = LocationPing.objects.filter(
+            trip=trip
+        ).order_by("-timestamp").first()
+
+        if not ping:
+            continue
+
+        result.append({
             "trip_id": trip.id,
-            "bus": trip.bus.registration_no if trip.bus else None,
-            "route": trip.route.name if trip.route else None,
-            "driver": trip.driver.username if trip.driver else None,
-            "lat": trip.current_lat,
-            "lon": trip.current_lon
+            "bus": trip.bus.registration_no,
+            "route": trip.route.name if trip.route else "",
+            "driver": trip.driver.username if trip.driver else "",
+            "lat": ping.lat,
+            "lon": ping.lon,
+            "has_issue": trip.has_issue,
         })
 
-    return Response(data)
-# ======================================================
+    return Response(result)# ======================================================
 # ADMIN: ONGOING TRIPS (SUMMARY TABLE)
 # ======================================================
 
