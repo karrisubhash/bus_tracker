@@ -112,8 +112,6 @@ DATABASES = {
     )
 }
 
-# ADD THIS LINE BELOW
-DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 # =====================================================
 # AUTH
