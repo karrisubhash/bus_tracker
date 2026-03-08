@@ -57,6 +57,7 @@ class Route(models.Model):
 
 # ===================== TRIP =====================
 
+
 class Trip(models.Model):
     STATUS_CHOICES = (
         ('scheduled', 'Scheduled'),
@@ -85,13 +86,9 @@ class Trip(models.Model):
     has_issue = models.BooleanField(default=False)
     issue_text = models.TextField(blank=True, null=True)
 
-    # ✅ NEW — CURRENT BUS LOCATION
-    current_lat = models.FloatField(null=True, blank=True)
-    current_lon = models.FloatField(null=True, blank=True)
-    last_ping = models.DateTimeField(null=True, blank=True)
-
     def __str__(self):
         return f"Trip {self.id} — {self.bus} — {self.route.name} ({self.status})"
+
 
 
 # ===================== LOCATION PING =====================
