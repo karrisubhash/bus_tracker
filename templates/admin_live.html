@@ -82,26 +82,36 @@ const buses = {}
 
 
 // ========================
-// FETCH BUS LOCATIONS
+// WEBSOCKET CONNECTION
 // ========================
 
-async function loadBusLocations(){
+function connectSocket(){
 
-try{
+const protocol = window.location.protocol === "https:" ? "wss://" : "ws://"
 
-const res = await fetch("/api/admin/live-locations/")
+const socket = new WebSocket(
+protocol + window.location.host + "/ws/bus/"
+)
 
-const data = await res.json()
-
-
-data.forEach(bus => {
-
-const id = bus.trip_id
-const lat = bus.lat
-const lon = bus.lon
+socket.onopen = function(){
+console.log("WebSocket Connected")
+}
 
 
-// create marker if not exists
+// ========================
+// RECEIVE LIVE BUS DATA
+// ========================
+
+socket.onmessage = function(event){
+
+const data = JSON.parse(event.data)
+
+const id = data.trip_id
+const lat = data.lat
+const lon = data.lon
+
+
+// CREATE MARKER IF NOT EXISTS
 
 if(!buses[id]){
 
@@ -109,42 +119,51 @@ const marker = L.marker([lat,lon],{icon:busIcon})
 .addTo(map)
 
 marker.bindPopup(
-"<b>Bus:</b> "+bus.bus+
-"<br><b>Route:</b> "+bus.route+
-"<br><b>Driver:</b> "+bus.driver
+"<b>Bus:</b> "+data.bus+
+"<br><b>Route:</b> "+data.route+
+"<br><b>Driver:</b> "+data.driver
 )
 
 buses[id] = marker
 
 }else{
 
-// move marker
+// MOVE BUS MARKER
 
 buses[id].setLatLng([lat,lon])
 
 }
 
-})
+}
 
 
-}catch(e){
+// ========================
+// ERROR HANDLING
+// ========================
 
-console.log("Error loading buses",e)
+socket.onerror = function(error){
+console.log("WebSocket Error:",error)
+}
+
+
+// ========================
+// AUTO RECONNECT
+// ========================
+
+socket.onclose = function(){
+
+console.log("WebSocket disconnected. Reconnecting...")
+
+setTimeout(connectSocket,3000)
 
 }
 
 }
 
 
+// START CONNECTION
 
-// ========================
-// UPDATE EVERY 3 SECONDS
-// ========================
-
-loadBusLocations()
-
-setInterval(loadBusLocations,3000)
-
+connectSocket()
 
 </script>
 
