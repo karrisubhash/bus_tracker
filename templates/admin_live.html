@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -32,7 +32,6 @@ box-shadow:0 3px 10px rgba(0,0,0,0.3);
 z-index:1000;
 font-weight:bold;
 }
-
 </style>
 
 </head>
@@ -49,36 +48,33 @@ font-weight:bold;
 
 <script>
 
-////////////////////////////
-// MAP
-////////////////////////////
+// ================= MAP =================
 
-const map = L.map("map").setView([17.721,83.301],13)
+const map = L.map('map').setView([17.721,83.301],13)
 
 L.tileLayer(
-"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{maxZoom:19}
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{ maxZoom:19 }
 ).addTo(map)
 
-////////////////////////////
-// BUS ICON
-////////////////////////////
+
+// ================= BUS ICON =================
 
 const busIcon = L.icon({
 iconUrl:"https://cdn-icons-png.flaticon.com/512/174/174237.png",
 iconSize:[35,35],
-iconAnchor:[17,35]
+iconAnchor:[17,35],
+popupAnchor:[0,-35]
 })
 
-////////////////////////////
-// STORE BUSES
-////////////////////////////
+
+// ================= STORE BUS MARKERS =================
 
 const buses = {}
 
-////////////////////////////
-// UPDATE BUS MARKER
-////////////////////////////
+
+
+// ================= UPDATE BUS =================
 
 function updateBus(data){
 
@@ -88,9 +84,11 @@ const lon = data.lon
 
 if(!lat || !lon) return
 
+
 if(!buses[id]){
 
-const marker = L.marker([lat,lon],{icon:busIcon}).addTo(map)
+const marker = L.marker([lat,lon],{icon:busIcon})
+.addTo(map)
 
 marker.bindPopup(
 "<b>Bus:</b> "+data.bus+
@@ -108,81 +106,52 @@ buses[id].setLatLng([lat,lon])
 
 }
 
-////////////////////////////
-// LOAD EXISTING BUS DATA
-////////////////////////////
 
-async function loadInitial(){
 
-try{
-
-const res = await fetch("/api/admin/live-locations/")
-const data = await res.json()
-
-data.forEach(updateBus)
-
-}catch(e){
-
-console.log("Initial load error",e)
-
-}
-
-}
-
-////////////////////////////
-// WEBSOCKET
-////////////////////////////
-
-let socket
+// ================= WEBSOCKET =================
 
 function connectSocket(){
 
-const protocol =
-window.location.protocol === "https:" ? "wss://" : "ws://"
+const protocol = window.location.protocol === "https:" ? "wss://" : "ws://"
 
-const wsUrl =
+const socket = new WebSocket(
 protocol + window.location.host + "/ws/bus/"
+)
 
-console.log("Connecting:",wsUrl)
-
-socket = new WebSocket(wsUrl)
-
-socket.onopen = ()=>{
-console.log("WebSocket connected")
+socket.onopen = function(){
+console.log("WebSocket Connected")
 }
 
-socket.onmessage = (event)=>{
 
-try{
+// RECEIVE DATA
+
+socket.onmessage = function(event){
+
+console.log("WS DATA:",event.data)
 
 const data = JSON.parse(event.data)
 
 updateBus(data)
 
-}catch(e){
-
-console.log("Bad WS data")
-
 }
 
+
+// ERROR
+
+socket.onerror = function(error){
+console.log("WebSocket error",error)
 }
 
-socket.onerror = (err)=>{
-console.log("WebSocket error",err)
-}
 
-socket.onclose = ()=>{
-console.log("WS closed, reconnecting...")
+// AUTO RECONNECT
+
+socket.onclose = function(){
+console.log("WebSocket closed, reconnecting...")
 setTimeout(connectSocket,3000)
 }
 
 }
 
-////////////////////////////
-// START
-////////////////////////////
-
-loadInitial()
 connectSocket()
 
 </script>
