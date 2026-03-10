@@ -57,9 +57,6 @@ JAZZMIN_SETTINGS = {
     },
 }
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = 'django-insecure-2=vmeox2m%+noodja(ga0p(=br3!n_4-&%=m%5=+@11(2g1^%z'
 # =====================================================
 # MIDDLEWARE
 # =====================================================
@@ -111,7 +108,7 @@ DATABASES = {
         ssl_require=True
     )
 }
-
+DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
 
 # =====================================================
 # AUTH
