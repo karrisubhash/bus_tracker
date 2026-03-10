@@ -59,12 +59,11 @@ L.tileLayer(
 
 
 // ================= BUS ICON =================
-
 const busIcon = L.icon({
 iconUrl:"https://cdn-icons-png.flaticon.com/512/174/174237.png",
-iconSize:[35,35],
-iconAnchor:[17,35],
-popupAnchor:[0,-35]
+iconSize:[40,40],
+iconAnchor:[20,40],
+popupAnchor:[0,-40]
 })
 
 
@@ -75,7 +74,6 @@ const buses = {}
 
 
 // ================= UPDATE BUS =================
-
 function updateBus(data){
 
 const id = data.trip_id
@@ -84,11 +82,10 @@ const lon = data.lon
 
 if(!lat || !lon) return
 
-
+// CREATE MARKER FIRST TIME
 if(!buses[id]){
 
-const marker = L.marker([lat,lon],{icon:busIcon})
-.addTo(map)
+const marker = L.marker([lat,lon],{icon:busIcon}).addTo(map)
 
 marker.bindPopup(
 "<b>Bus:</b> "+data.bus+
@@ -98,16 +95,20 @@ marker.bindPopup(
 
 buses[id] = marker
 
+// center map when first location arrives
+map.setView([lat,lon],15)
+
 }else{
 
+// MOVE MARKER
 buses[id].setLatLng([lat,lon])
 
-}
+// optional: follow the bus
+map.panTo([lat,lon])
 
 }
 
-
-
+}
 // ================= WEBSOCKET =================
 
 function connectSocket(){
