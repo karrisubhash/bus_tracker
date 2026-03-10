@@ -50,7 +50,7 @@ font-weight:bold;
 
 // ================= MAP =================
 
-const map = L.map('map').setView([17.721,83.301],13)
+const map = L.map('map').setView([17.721,83.301],14)
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -96,15 +96,12 @@ marker.bindPopup(
 buses[id] = marker
 
 // center map when first location arrives
-map.setView([lat,lon],15)
 
 }else{
 
 // MOVE MARKER
 buses[id].setLatLng([lat,lon])
 
-// optional: follow the bus
-map.panTo([lat,lon])
 
 }
 
