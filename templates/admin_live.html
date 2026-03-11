@@ -10,6 +10,7 @@
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -32,6 +33,7 @@ box-shadow:0 3px 10px rgba(0,0,0,0.3);
 z-index:1000;
 font-weight:bold;
 }
+
 </style>
 
 </head>
@@ -59,6 +61,7 @@ L.tileLayer(
 
 
 // ================= BUS ICON =================
+
 const busIcon = L.icon({
 iconUrl:"https://cdn-icons-png.flaticon.com/512/174/174237.png",
 iconSize:[40,40],
@@ -67,13 +70,43 @@ popupAnchor:[0,-20]
 })
 
 
-// ================= STORE BUS MARKERS =================
+// ================= STORAGE =================
 
 const buses = {}
+const lastUpdate = {}
+
+
+
+// ================= SMOOTH MOVEMENT =================
+
+function moveSmooth(marker,newLat,newLon){
+
+const start = marker.getLatLng()
+
+const steps = 20
+let i = 0
+
+const interval = setInterval(()=>{
+
+i++
+
+const lat = start.lat + (newLat - start.lat) * (i/steps)
+const lon = start.lng + (newLon - start.lng) * (i/steps)
+
+marker.setLatLng([lat,lon])
+
+if(i >= steps){
+clearInterval(interval)
+}
+
+},200)
+
+}
 
 
 
 // ================= UPDATE BUS =================
+
 function updateBus(data){
 
 const id = data.trip_id
@@ -82,7 +115,11 @@ const lon = data.lon
 
 if(!lat || !lon) return
 
-// CREATE MARKER FIRST TIME
+lastUpdate[id] = Date.now()
+
+
+// CREATE BUS FIRST TIME
+
 if(!buses[id]){
 
 const marker = L.marker([lat,lon],{icon:busIcon}).addTo(map)
@@ -90,22 +127,52 @@ const marker = L.marker([lat,lon],{icon:busIcon}).addTo(map)
 marker.bindPopup(
 "<b>Bus:</b> "+data.bus+
 "<br><b>Route:</b> "+data.route+
-"<br><b>Driver:</b> "+data.driver
+"<br><b>Driver:</b> "+data.driver+
+"<br>Status: Live"
 )
 
 buses[id] = marker
 
-// center map when first location arrives
-
 }else{
 
-// MOVE MARKER
-buses[id].setLatLng([lat,lon])
+// SMOOTH MOVE
 
+moveSmooth(buses[id],lat,lon)
+
+}
+
+}
+
+
+
+// ================= OFFLINE DETECTION =================
+
+setInterval(()=>{
+
+for(const id in lastUpdate){
+
+const diff = Date.now() - lastUpdate[id]
+
+if(diff > 30000){
+
+if(buses[id]){
+
+buses[id].setPopupContent(
+"<b>Bus:</b> "+id+
+"<br>Status: Offline"+
+"<br>Last update: "+Math.floor(diff/1000)+"s ago"
+)
 
 }
 
 }
+
+}
+
+},10000)
+
+
+
 // ================= WEBSOCKET =================
 
 function connectSocket(){
@@ -117,15 +184,15 @@ protocol + window.location.host + "/ws/bus/"
 )
 
 socket.onopen = function(){
+
 console.log("WebSocket Connected")
+
 }
 
 
 // RECEIVE DATA
 
 socket.onmessage = function(event){
-
-console.log("WS DATA:",event.data)
 
 const data = JSON.parse(event.data)
 
@@ -137,15 +204,20 @@ updateBus(data)
 // ERROR
 
 socket.onerror = function(error){
-console.log("WebSocket error",error)
+
+console.log("WebSocket error:",error)
+
 }
 
 
 // AUTO RECONNECT
 
 socket.onclose = function(){
-console.log("WebSocket closed, reconnecting...")
+
+console.log("WebSocket disconnected, reconnecting...")
+
 setTimeout(connectSocket,3000)
+
 }
 
 }
