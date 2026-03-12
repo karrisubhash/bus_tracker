@@ -84,7 +84,7 @@ async function loadRoute(tripId){
 
 try{
 
-const res = await fetch(`/api/trips/${tripId}/route-path/`)
+const res = await fetch(`/trips/${tripId}/route-path/`)
 const data = await res.json()
 
 if(!data.path || data.path.length === 0) return
