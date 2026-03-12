@@ -157,10 +157,18 @@ lastRouteUpdate[id] = now
 // update route every 10 seconds only
 if(now - lastRouteUpdate[id] > 10000){
 
+const now = Date.now()
+const lastRouteUpdate = {}
+if(!lastRouteUpdate[id] || now - lastRouteUpdate[id] > 20000){
+
 routes[id].setWaypoints([
 L.latLng(lat,lon),
 L.latLng(STOP[0],STOP[1])
 ])
+
+lastRouteUpdate[id] = now
+
+}
 
 lastRouteUpdate[id] = now
 
