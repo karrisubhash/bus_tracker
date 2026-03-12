@@ -263,7 +263,7 @@ def admin_live_locations(request):
 
         result.append({
             "trip_id": trip.id,
-            "bus": trip.bus.registration_no,
+            "bus": trip.bus.registration_no if trip.bus else "",
             "route": trip.route.name if trip.route else "",
             "driver": trip.driver.username if trip.driver else "",
             "lat": ping.lat,
