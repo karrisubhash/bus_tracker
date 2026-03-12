@@ -48,7 +48,7 @@ class Route(models.Model):
     # stops OR path — merged into ONE field
     path = models.JSONField(
         blank=True,null=True)
-    )
+
 
     def __str__(self):
         return self.name
