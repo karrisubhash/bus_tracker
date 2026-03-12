@@ -7,10 +7,8 @@
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
-
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -33,6 +31,7 @@ box-shadow:0 3px 10px rgba(0,0,0,0.3);
 z-index:1000;
 font-weight:bold;
 }
+
 </style>
 </head>
 
@@ -45,15 +44,12 @@ font-weight:bold;
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
 <script>
 
 // ================= MAP =================
 
-const STOP = [17.91984,83.41716]
-
-const map = L.map('map').setView([17.721,83.301],14)
+const map = L.map('map').setView([17.91925,83.42445],13)
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -80,7 +76,29 @@ iconAnchor:[20,20]
 
 const buses = {}
 const routes = {}
-const lastRouteUpdate = {}
+
+
+// ================= LOAD ROUTE =================
+
+async function loadRoute(tripId){
+
+try{
+
+const res = await fetch(`/api/trips/${tripId}/route-path/`)
+const data = await res.json()
+
+if(!data.path || data.path.length === 0) return
+
+routes[tripId] = L.polyline(data.path,{
+color:"#2563eb",
+weight:5
+}).addTo(map)
+
+}catch(e){
+console.log("Route load error",e)
+}
+
+}
 
 
 // ================= UPDATE BUS =================
@@ -98,11 +116,12 @@ const position = [lat,lon]
 const icon = data.has_issue ? issueBusIcon : normalBusIcon
 
 
-// ---------- MARKER ----------
+// CREATE MARKER
 
 if(!buses[id]){
 
-const marker = L.marker(position,{icon:icon}).addTo(map)
+const marker = L.marker(position,{icon:icon})
+.addTo(map)
 
 marker.bindPopup(
 "<b>Bus:</b> "+data.bus+
@@ -111,68 +130,15 @@ marker.bindPopup(
 )
 
 buses[id] = marker
+
 map.panTo(position)
+
+loadRoute(id)
 
 }else{
 
 buses[id].setLatLng(position)
 buses[id].setIcon(icon)
-
-}
-
-
-// ---------- ROAD ROUTE ----------
-
-const now = Date.now()
-
-if(!routes[id]){
-
-routes[id] = L.Routing.control({
-
-waypoints:[
-L.latLng(lat,lon),
-L.latLng(STOP[0],STOP[1])
-],
-
-router:L.Routing.osrmv1({
-serviceUrl:"https://router.project-osrm.org/route/v1"
-}),
-
-lineOptions:{
-styles:[{color:"#2563eb",weight:5}]
-},
-
-addWaypoints:false,
-draggableWaypoints:false,
-fitSelectedRoutes:false,
-show:false,
-createMarker:()=>null
-
-}).addTo(map)
-
-lastRouteUpdate[id] = now
-
-}else{
-
-// update route every 10 seconds only
-if(now - lastRouteUpdate[id] > 10000){
-
-const now = Date.now()
-const lastRouteUpdate = {}
-if(!lastRouteUpdate[id] || now - lastRouteUpdate[id] > 20000){
-
-routes[id].setWaypoints([
-L.latLng(lat,lon),
-L.latLng(STOP[0],STOP[1])
-])
-
-lastRouteUpdate[id] = now
-
-}
-
-lastRouteUpdate[id] = now
-
-}
 
 }
 
@@ -191,16 +157,28 @@ socket = new WebSocket(
 protocol + window.location.host + "/ws/bus/"
 )
 
-socket.onopen = () => console.log("WebSocket Connected")
-
-socket.onmessage = (event)=>{
-const data = JSON.parse(event.data)
-updateBus(data)
+socket.onopen = function(){
+console.log("WebSocket Connected")
 }
 
-socket.onclose = ()=>{
+socket.onmessage = function(event){
+
+const data = JSON.parse(event.data)
+
+updateBus(data)
+
+}
+
+socket.onclose = function(){
+
 console.log("WebSocket disconnected")
+
 setTimeout(connectSocket,3000)
+
+}
+
+socket.onerror = function(error){
+console.log("WebSocket error",error)
 }
 
 }
@@ -215,14 +193,13 @@ async function fallbackPolling(){
 try{
 
 const res = await fetch("/api/admin/live-locations/")
-  
-if(!res.ok){
-console.log("Server error",res.status)
-return
-}
+if(!res.ok) return
+
 const data = await res.json()
 
-data.forEach(updateBus)
+data.forEach(bus=>{
+updateBus(bus)
+})
 
 }catch(e){
 console.log("Polling error",e)
@@ -230,7 +207,8 @@ console.log("Polling error",e)
 
 }
 
-setInterval(fallbackPolling,3000)
+setInterval(fallbackPolling,5000)
+
 
 </script>
 
