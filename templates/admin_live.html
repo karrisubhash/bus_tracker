@@ -107,9 +107,42 @@ console.log("Route load error",e)
 }
 
 }
+//smooth movement
+function smoothMove(marker, newLatLng){
 
+const start = marker.getLatLng()
 
+const startLat = start.lat
+const startLng = start.lng
 
+const endLat = newLatLng[0]
+const endLng = newLatLng[1]
+
+const duration = 2000
+const frames = 60
+
+let frame = 0
+
+const latStep = (endLat - startLat) / frames
+const lngStep = (endLng - startLng) / frames
+
+const interval = setInterval(()=>{
+
+frame++
+
+const lat = startLat + latStep * frame
+const lng = startLng + lngStep * frame
+
+marker.setLatLng([lat,lng])
+
+if(frame >= frames){
+clearInterval(interval)
+marker.setLatLng(newLatLng)
+}
+
+}, duration/frames)
+
+}
 // ================= UPDATE BUS =================
 
 function updateBus(data){
@@ -147,7 +180,7 @@ loadRoute(id)
 
 }else{
 
-buses[id].setLatLng(position)
+smoothMove(buses[id],position)
 buses[id].setIcon(icon)
 
 }
