@@ -207,6 +207,11 @@ async function fallbackPolling(){
 try{
 
 const res = await fetch("/api/admin/live-locations/")
+  
+if(!res.ok){
+console.log("Server error",res.status)
+return
+}
 const data = await res.json()
 
 data.forEach(updateBus)
