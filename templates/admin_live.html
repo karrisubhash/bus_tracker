@@ -86,7 +86,7 @@ if(routes[tripId]) return
 
 try{
 
-const res = await fetch(`/trips/${tripId}/route-path/`)
+const res = await fetch(`/api/trips/${tripId}/route-path/`)
 
 if(!res.ok){
 console.log("Route API not found for trip",tripId)
