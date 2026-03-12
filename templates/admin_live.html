@@ -47,7 +47,7 @@ font-weight:bold;
 <script>
 
 // ================= MAP =================
-
+const STOP = [17.91984, 83.41716];
 const map = L.map('map').setView([17.721,83.301],14)
 
 L.tileLayer(
@@ -58,50 +58,80 @@ L.tileLayer(
 
 // ================= BUS ICON =================
 
-const busIcon = L.icon({
+const normalBusIcon = L.icon({
 iconUrl:"https://cdn-icons-png.flaticon.com/512/174/174237.png",
 iconSize:[40,40],
 iconAnchor:[20,20]
 })
-
+const issueBusIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/564/564619.png",
+  iconSize: [40,40],
+  iconAnchor: [20,20],
 
 // ================= BUS STORAGE =================
 
 const buses = {}
-
+const routes ={}
 
 
 // ================= UPDATE BUS =================
-
 function updateBus(data){
 
-const id = data.trip_id
-const lat = data.lat
-const lon = data.lon
+  const id = data.trip_id
+  const lat = data.lat
+  const lon = data.lon
 
-if(!lat || !lon) return
+  if(!lat || !lon) return
 
-if(!buses[id]){
+  const busPosition = [lat, lon]
 
-const marker = L.marker([lat,lon],{icon:busIcon}).addTo(map)
+  const icon = data.has_issue ? issueBusIcon : normalBusIcon
 
-marker.bindPopup(
-"<b>Bus:</b> "+data.bus+
-"<br><b>Route:</b> "+data.route+
-"<br><b>Driver:</b> "+data.driver
-)
+  // ================= CREATE MARKER =================
 
-buses[id] = marker
+  if(!buses[id]){
 
-}else{
+    const marker = L.marker(busPosition,{icon:icon})
+    .addTo(map)
 
-buses[id].setLatLng([lat,lon])
+    marker.bindPopup(
+      "<b>Bus:</b> "+data.bus+
+      "<br><b>Route:</b> "+data.route+
+      "<br><b>Driver:</b> "+data.driver
+    )
+
+    buses[id] = marker
+
+    map.panTo(busPosition)
+
+  }else{
+
+    buses[id].setLatLng(busPosition)
+    buses[id].setIcon(icon)
+
+  }
+
+  // ================= DRAW POLYLINE =================
+
+  const routeCoords = [
+    busPosition,
+    STOP
+  ]
+
+  if(!routes[id]){
+
+    routes[id] = L.polyline(routeCoords,{
+      color:"blue",
+      weight:4
+    }).addTo(map)
+
+  }else{
+
+    routes[id].setLatLngs(routeCoords)
+
+  }
 
 }
-
-}
-
-
 
 // ================= WEBSOCKET =================
 
