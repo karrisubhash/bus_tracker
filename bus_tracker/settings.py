@@ -17,8 +17,13 @@ SECRET_KEY = 'django-insecure-2=vmeox2m%+noodja(ga0p(=br3!n_4-&%=m%5=+@11(2g1^%z
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "college-bus-tracking-system-ri73.onrender.com",
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://college-bus-tracking-system-ri73.onrender.com",
+]
 
 # =====================================================
 # APPLICATIONS
