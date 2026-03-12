@@ -1,171 +1,219 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Login</title>
+<title>Admin Login</title>
 
-  <!-- Mobile Responsive -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #007bff, #6610f2);
-      margin: 0;
-    }
+<style>
 
-    .box {
-      background: white;
-      padding: 30px;
-      width: 350px;
-      max-width: 90%;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      text-align: center;
-    }
+*{
+box-sizing:border-box;
+}
 
-    h2 {
-      margin-bottom: 20px;
-    }
+body{
+font-family:Arial,sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+background:linear-gradient(135deg,#2563eb,#9333ea);
+margin:0;
+padding:20px;
+}
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-    }
+/* LOGIN BOX */
 
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: bold;
-    }
+.box{
+background:white;
+padding:35px;
+width:360px;
+max-width:100%;
+border-radius:14px;
+box-shadow:0 20px 40px rgba(0,0,0,0.25);
+text-align:center;
+}
 
-    button:disabled {
-      background: #999;
-      cursor: not-allowed;
-    }
+h2{
+margin-bottom:20px;
+color:#111827;
+}
 
-    /* Loader */
-    .loader {
-      display: none;
-      margin-top: 15px;
-    }
+/* INPUT */
 
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      width: 35px;
-      height: 35px;
-      animation: spin 1s linear infinite;
-      margin: 10px auto;
-    }
+input{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:1px solid #ddd;
+border-radius:8px;
+font-size:15px;
+outline:none;
+}
 
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
+input:focus{
+border-color:#2563eb;
+}
 
-    /* Mobile adjustments */
-    @media (max-width: 480px) {
-      .box {
-        padding: 20px;
-      }
+/* BUTTON */
 
-      input, button {
-        font-size: 16px;
-      }
-    }
+button{
+width:100%;
+padding:14px;
+margin-top:16px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+font-weight:bold;
+transition:0.2s;
+}
 
-  </style>
+button:hover{
+background:#1d4ed8;
+}
+
+button:disabled{
+background:#9ca3af;
+cursor:not-allowed;
+}
+
+/* LOADER */
+
+.loader{
+display:none;
+margin-top:15px;
+}
+
+.spinner{
+border:4px solid #f3f3f3;
+border-top:4px solid #2563eb;
+border-radius:50%;
+width:35px;
+height:35px;
+animation:spin 1s linear infinite;
+margin:10px auto;
+}
+
+@keyframes spin{
+100%{transform:rotate(360deg);}
+}
+
+/* MOBILE */
+
+@media(max-width:480px){
+
+.box{
+padding:25px;
+}
+
+input,button{
+font-size:16px;
+}
+
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="box">
-  <h2>Admin Login</h2>
 
-  <input id="username" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
-  <button id="loginBtn" onclick="login()">Login</button>
+<h2>Admin Login</h2>
 
-  <!-- Loading Spinner -->
-  <div class="loader" id="loader">
-    <div class="spinner"></div>
-    <p>Logging in...</p>
-  </div>
+<input id="username" placeholder="Username">
+
+<input id="password" type="password" placeholder="Password">
+
+<button id="loginBtn" onclick="login()">Login</button>
+
+<div class="loader" id="loader">
+<div class="spinner"></div>
+<p>Logging in...</p>
 </div>
 
+</div>
 
 <script>
 
-async function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const loader = document.getElementById("loader");
-  const loginBtn = document.getElementById("loginBtn");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
+const loader = document.getElementById("loader");
+const loginBtn = document.getElementById("loginBtn");
 
-  if (!username || !password) {
-    alert("Please enter username and password");
-    return;
-  }
+/* ENTER KEY LOGIN */
 
-  loader.style.display = "block";
-  loginBtn.disabled = true;
+passwordInput.addEventListener("keypress",function(e){
+if(e.key==="Enter"){
+login();
+}
+});
 
-  try {
-    const res = await fetch("/api/token/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
+/* LOGIN FUNCTION */
 
-    const data = await res.json();
+async function login(){
 
-    if (!res.ok) {
-      alert("Login failed");
-      loader.style.display = "none";
-      loginBtn.disabled = false;
-      return;
-    }
+const username=usernameInput.value.trim();
+const password=passwordInput.value.trim();
 
-    if (data.user?.role !== "admin") {
-      alert("Not an admin");
-      loader.style.display = "none";
-      loginBtn.disabled = false;
-      return;
-    }
-
-    localStorage.setItem("admin_token", data.access);
-    window.location.href = "/admin-panel/dashboard/";
-
-  } catch (error) {
-    alert("Network error");
-    loader.style.display = "none";
-    loginBtn.disabled = false;
-  }
+if(!username || !password){
+alert("Enter username and password");
+return;
 }
 
+loader.style.display="block";
+loginBtn.disabled=true;
 
-/* Safe logout handler (only if button exists) */
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("admin_token");
-    alert("Logged out successfully");
-    window.location.href = "/admin-panel/login/";
-  });
+try{
+
+const res = await fetch("/api/token/",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({username,password})
+});
+
+const data = await res.json();
+
+if(!res.ok){
+alert(data.detail || "Invalid login");
+resetUI();
+return;
+}
+
+if(data.user?.role!=="admin"){
+alert("You are not an admin");
+resetUI();
+return;
+}
+
+/* SAVE TOKEN */
+
+localStorage.setItem("admin_token",data.access);
+
+/* REDIRECT */
+
+window.location.href="/admin-panel/dashboard/";
+
+}
+catch(error){
+
+alert("Network error");
+resetUI();
+
+}
+
+}
+
+/* RESET UI */
+
+function resetUI(){
+loader.style.display="none";
+loginBtn.disabled=false;
 }
 
 </script>
