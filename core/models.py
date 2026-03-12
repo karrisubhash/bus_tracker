@@ -47,8 +47,7 @@ class Route(models.Model):
 
     # stops OR path — merged into ONE field
     path = models.JSONField(
-        default=list,
-        help_text="List of stops with lat/lon"
+        blank=True,null=True)
     )
 
     def __str__(self):
