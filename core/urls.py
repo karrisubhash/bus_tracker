@@ -28,7 +28,7 @@ urlpatterns = [
     path('trips/<int:trip_id>/claim/', claim_trip),
     path('trips/<int:trip_id>/pings/', LocationPingCreateView.as_view()),
     path('trips/<int:trip_id>/latest_ping/', latest_ping),
-    path('api/trips/<int:trip_id>/route/', route_path),
+    path('api/trips/<int:trip_id>/route-path/', route_path),
     path('trips/<int:trip_id>/issue/', report_issue),
     path('trips/<int:trip_id>/end/', end_trip),
     path("trips/<int:trip_id>/report-issue/", report_issue),
