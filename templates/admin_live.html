@@ -7,6 +7,9 @@
 <link rel="stylesheet"
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
+
 <style>
 body{
 margin:0;
@@ -31,7 +34,6 @@ z-index:1000;
 font-weight:bold;
 }
 </style>
-
 </head>
 
 <body>
@@ -43,95 +45,131 @@ font-weight:bold;
 <div id="map"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
 <script>
 
 // ================= MAP =================
-const STOP = [17.91984, 83.41716];
+
+const STOP = [17.91984,83.41716]
+
 const map = L.map('map').setView([17.721,83.301],14)
 
 L.tileLayer(
 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-{ maxZoom:19 }
+{maxZoom:19}
 ).addTo(map)
 
 
-// ================= BUS ICON =================
+// ================= ICONS =================
 
 const normalBusIcon = L.icon({
 iconUrl:"https://cdn-icons-png.flaticon.com/512/174/174237.png",
 iconSize:[40,40],
 iconAnchor:[20,20]
 })
+
 const issueBusIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
-  iconSize: [40,40],
-  iconAnchor: [20,20],
+iconUrl:"https://cdn-icons-png.flaticon.com/512/3205/3205237.png",
+iconSize:[40,40],
+iconAnchor:[20,20]
 })
-// ================= BUS STORAGE =================
+
+
+// ================= STORAGE =================
 
 const buses = {}
-const routes ={}
+const routes = {}
+const lastRouteUpdate = {}
 
 
 // ================= UPDATE BUS =================
+
 function updateBus(data){
 
-  const id = data.trip_id
-  const lat = data.lat
-  const lon = data.lon
+const id = data.trip_id
+const lat = data.lat
+const lon = data.lon
 
-  if(!lat || !lon) return
+if(!lat || !lon) return
 
-  const busPosition = [lat, lon]
+const position = [lat,lon]
 
-  const icon = data.has_issue ? issueBusIcon : normalBusIcon
+const icon = data.has_issue ? issueBusIcon : normalBusIcon
 
-  // ================= CREATE MARKER =================
 
-  if(!buses[id]){
+// ---------- MARKER ----------
 
-    const marker = L.marker(busPosition,{icon:icon})
-    .addTo(map)
+if(!buses[id]){
 
-    marker.bindPopup(
-      "<b>Bus:</b> "+data.bus+
-      "<br><b>Route:</b> "+data.route+
-      "<br><b>Driver:</b> "+data.driver
-    )
+const marker = L.marker(position,{icon:icon}).addTo(map)
 
-    buses[id] = marker
+marker.bindPopup(
+"<b>Bus:</b> "+data.bus+
+"<br><b>Route:</b> "+data.route+
+"<br><b>Driver:</b> "+data.driver
+)
 
-    map.panTo(busPosition)
+buses[id] = marker
+map.panTo(position)
 
-  }else{
+}else{
 
-    buses[id].setLatLng(busPosition)
-    buses[id].setIcon(icon)
-
-  }
-
-  // ================= DRAW POLYLINE =================
-
-  const routeCoords = [
-    busPosition,
-    STOP
-  ]
-
-  if(!routes[id]){
-
-    routes[id] = L.polyline(routeCoords,{
-      color:"blue",
-      weight:4
-    }).addTo(map)
-
-  }else{
-
-    routes[id].setLatLngs(routeCoords)
-
-  }
+buses[id].setLatLng(position)
+buses[id].setIcon(icon)
 
 }
+
+
+// ---------- ROAD ROUTE ----------
+
+const now = Date.now()
+
+if(!routes[id]){
+
+routes[id] = L.Routing.control({
+
+waypoints:[
+L.latLng(lat,lon),
+L.latLng(STOP[0],STOP[1])
+],
+
+router:L.Routing.osrmv1({
+serviceUrl:"https://router.project-osrm.org/route/v1"
+}),
+
+lineOptions:{
+styles:[{color:"#2563eb",weight:5}]
+},
+
+addWaypoints:false,
+draggableWaypoints:false,
+fitSelectedRoutes:false,
+show:false,
+createMarker:()=>null
+
+}).addTo(map)
+
+lastRouteUpdate[id] = now
+
+}else{
+
+// update route every 10 seconds only
+if(now - lastRouteUpdate[id] > 10000){
+
+routes[id].setWaypoints([
+L.latLng(lat,lon),
+L.latLng(STOP[0],STOP[1])
+])
+
+lastRouteUpdate[id] = now
+
+}
+
+}
+
+}
+
 
 // ================= WEBSOCKET =================
 
@@ -145,30 +183,21 @@ socket = new WebSocket(
 protocol + window.location.host + "/ws/bus/"
 )
 
-socket.onopen = function(){
-console.log("WebSocket Connected")
-}
+socket.onopen = () => console.log("WebSocket Connected")
 
-socket.onmessage = function(event){
-
+socket.onmessage = (event)=>{
 const data = JSON.parse(event.data)
-
 updateBus(data)
-
 }
 
-socket.onclose = function(){
-
-console.log("WebSocket disconnected, reconnecting...")
-
+socket.onclose = ()=>{
+console.log("WebSocket disconnected")
 setTimeout(connectSocket,3000)
-
 }
 
 }
 
 connectSocket()
-
 
 
 // ================= POLLING BACKUP =================
@@ -180,9 +209,7 @@ try{
 const res = await fetch("/api/admin/live-locations/")
 const data = await res.json()
 
-data.forEach(bus=>{
-updateBus(bus)
-})
+data.forEach(updateBus)
 
 }catch(e){
 console.log("Polling error",e)
@@ -190,7 +217,6 @@ console.log("Polling error",e)
 
 }
 
-// run every 5 seconds
 setInterval(fallbackPolling,3000)
 
 </script>
