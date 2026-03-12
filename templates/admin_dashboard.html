@@ -1,125 +1,167 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Dashboard</title>
+<title>Admin Dashboard</title>
 
-  <!-- Mobile Responsive -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #2563eb, #9333ea);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+<style>
 
-    .box {
-      background: white;
-      padding: 40px;
-      width: 380px;
-      max-width: 90%;
-      text-align: center;
-      border-radius: 12px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-    }
+*{
+box-sizing:border-box;
+}
 
-    h2 {
-      margin-bottom: 25px;
-      font-size: 22px;
-    }
+body{
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#2563eb,#9333ea);
+margin:0;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 15px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: 0.3s ease;
-    }
+/* MAIN BOX */
 
-    .map-btn {
-      background: #2563eb;
-      color: white;
-    }
+.box{
+background:white;
+padding:35px;
+width:400px;
+max-width:100%;
+text-align:center;
+border-radius:14px;
+box-shadow:0 20px 40px rgba(0,0,0,0.25);
+}
 
-    .map-btn:hover {
-      background: #1d4ed8;
-    }
+h2{
+margin-bottom:25px;
+font-size:24px;
+color:#111827;
+}
 
-    .table-btn {
-      background: #16a34a;
-      color: white;
-    }
+/* BUTTONS */
 
-    .table-btn:hover {
-      background: #15803d;
-    }
+button{
+width:100%;
+padding:16px;
+margin-top:15px;
+font-size:16px;
+cursor:pointer;
+border:none;
+border-radius:10px;
+font-weight:bold;
+transition:all 0.25s ease;
+}
 
-    .logout-btn {
-      background: #dc2626;
-      color: white;
-    }
+button:active{
+transform:scale(0.97);
+}
 
-    .logout-btn:hover {
-      background: #b91c1c;
-    }
+/* MAP BUTTON */
 
-    /* Mobile adjustments */
-    @media (max-width: 480px) {
-      .box {
-        padding: 25px;
-      }
+.map-btn{
+background:#2563eb;
+color:white;
+}
 
-      h2 {
-        font-size: 20px;
-      }
+.map-btn:hover{
+background:#1d4ed8;
+}
 
-      button {
-        font-size: 17px;
-        padding: 16px;
-      }
-    }
+/* TABLE BUTTON */
 
-  </style>
+.table-btn{
+background:#16a34a;
+color:white;
+}
+
+.table-btn:hover{
+background:#15803d;
+}
+
+/* LOGOUT BUTTON */
+
+.logout-btn{
+background:#dc2626;
+color:white;
+}
+
+.logout-btn:hover{
+background:#b91c1c;
+}
+
+/* MOBILE OPTIMIZATION */
+
+@media(max-width:600px){
+
+body{
+align-items:flex-start;
+padding-top:40px;
+}
+
+.box{
+width:100%;
+padding:25px;
+}
+
+h2{
+font-size:20px;
+}
+
+button{
+font-size:17px;
+padding:18px;
+}
+
+}
+
+</style>
 </head>
+
 <body>
 
 <div class="box">
-  <h2>Admin Dashboard</h2>
 
-  <button class="map-btn" onclick="goMap()">Go to Live Map 🗺</button>
-  <button class="table-btn" onclick="goTable()">Go to Data Table 📊</button>
-  <button class="logout-btn" onclick="logout()">Logout 🚪</button>
+<h2>Admin Dashboard</h2>
+
+<button class="map-btn" onclick="goMap()">
+Go to Live Map 🗺
+</button>
+
+<button class="table-btn" onclick="goTable()">
+Go to Data Table 📊
+</button>
+
+<button class="logout-btn" onclick="logout()">
+Logout 🚪
+</button>
+
 </div>
 
 <script>
+
 const token = localStorage.getItem("admin_token");
 
-if (!token) {
-  alert("Login required");
-  window.location.href = "/admin-panel/login/";
+if(!token){
+alert("Login required");
+window.location.href="/admin-panel/login/";
 }
 
-function goMap() {
-  window.location.href = "/admin-panel/live/";
+function goMap(){
+window.location.href="/admin-panel/live/";
 }
 
-function goTable() {
-  window.location.href = "/admin-panel/table/";
+function goTable(){
+window.location.href="/admin-panel/table/";
 }
 
-function logout() {
-  localStorage.removeItem("admin_token");
-  alert("Logged out");
-  window.location.href = "/admin-panel/login/";
+function logout(){
+localStorage.removeItem("admin_token");
+alert("Logged out");
+window.location.href="/admin-panel/login/";
 }
+
 </script>
 
 </body>
