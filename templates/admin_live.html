@@ -8,7 +8,6 @@
 href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -31,7 +30,6 @@ box-shadow:0 3px 10px rgba(0,0,0,0.3);
 z-index:1000;
 font-weight:bold;
 }
-
 </style>
 </head>
 
@@ -78,13 +76,23 @@ const buses = {}
 const routes = {}
 
 
+
 // ================= LOAD ROUTE =================
 
 async function loadRoute(tripId){
 
+// prevent duplicate route loading
+if(routes[tripId]) return
+
 try{
 
 const res = await fetch(`/trips/${tripId}/route-path/`)
+
+if(!res.ok){
+console.log("Route API not found for trip",tripId)
+return
+}
+
 const data = await res.json()
 
 if(!data.path || data.path.length === 0) return
@@ -99,6 +107,7 @@ console.log("Route load error",e)
 }
 
 }
+
 
 
 // ================= UPDATE BUS =================
@@ -133,6 +142,7 @@ buses[id] = marker
 
 map.panTo(position)
 
+// load route only once
 loadRoute(id)
 
 }else{
@@ -143,6 +153,7 @@ buses[id].setIcon(icon)
 }
 
 }
+
 
 
 // ================= WEBSOCKET =================
@@ -157,9 +168,7 @@ socket = new WebSocket(
 protocol + window.location.host + "/ws/bus/"
 )
 
-socket.onopen = function(){
-console.log("WebSocket Connected")
-}
+socket.onopen = () => console.log("WebSocket Connected")
 
 socket.onmessage = function(event){
 
@@ -186,13 +195,15 @@ console.log("WebSocket error",error)
 connectSocket()
 
 
+
 // ================= POLLING BACKUP =================
 
 async function fallbackPolling(){
 
 try{
 
-const res = await fetch("/api/admin/live-locations/")
+const res = await fetch("/admin/live-locations/")
+
 if(!res.ok) return
 
 const data = await res.json()
@@ -208,7 +219,6 @@ console.log("Polling error",e)
 }
 
 setInterval(fallbackPolling,5000)
-
 
 </script>
 
