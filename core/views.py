@@ -199,7 +199,7 @@ def latest_ping(request, trip_id):
 # ======================================================
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([])
 def route_path(request, trip_id):
     trip = get_object_or_404(Trip, id=trip_id)
 
