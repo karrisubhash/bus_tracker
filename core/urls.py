@@ -15,6 +15,7 @@ from .views import (
     admin_ongoing_trips,admin_completed_trips,
     resolve_issue,
     admin_dashboard_view,
+delete_all_pings,
 driver_page,
 )
 
