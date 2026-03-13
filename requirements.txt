@@ -10,4 +10,4 @@ redis
 dj-database-url==3.1.0
 daphne
 django-jazzmin
-
+geopy
