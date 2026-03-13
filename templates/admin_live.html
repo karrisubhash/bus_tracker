@@ -179,7 +179,15 @@ map.panTo(position)
 loadRoute(id)
 
 }else{
+    const current = buses[id].getLatLng()
+    const newPos = L.latLng(lat, lon)
 
+    const distance = current.distanceTo(newPos)
+
+    // ignore GPS noise
+    if(distance < 5){
+        return
+    }
 smoothMove(buses[id],position)
 buses[id].setIcon(icon)
 
