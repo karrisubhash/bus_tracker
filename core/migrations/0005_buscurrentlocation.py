@@ -5,8 +5,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("core", "0004_trip_has_issue_issue_text"),
-    ]
+  ("core", "0004_trip_has_issue_trip_issue_text_alter_trip_driver"),    ]
 
     operations = [
         migrations.CreateModel(
