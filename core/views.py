@@ -140,6 +140,9 @@ class LocationPingCreateView(APIView):
         )
 
         return Response(serializer.data, status=201)
+
+#==========================delet all
+
         # ======================================================
 # DRIVER: CLAIM TRIP
 # ======================================================
@@ -166,7 +169,16 @@ def claim_trip(request, trip_id):
 # ======================================================
 # DRIVER: REPORT ISSUE
 # ======================================================
+@api_view(["POST"])
+@permission_classes([IsAuthenticated, IsAdmin])
+def delete_all_pings(request):
 
+    deleted, _ = LocationPing.objects.all().delete()
+
+    return Response({
+        "message": "All pings deleted",
+        "deleted_count": deleted
+    })
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def report_issue(request, trip_id):
