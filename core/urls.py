@@ -44,4 +44,6 @@ path("driver/", driver_page),
     path('admin/live-locations/', admin_live_locations),
     path('admin/ongoing-trips/', admin_ongoing_trips),
     path("admin/completed-trips/", admin_completed_trips),
+    path("admin/delete-all-pings/", delete_all_pings),
+    
 ]
