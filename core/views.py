@@ -89,21 +89,22 @@ class LocationPingCreateView(APIView):
         '''
 from datetime import timedelta
 from django.utils import timezone
-from .models import BusCurrentLocation
+import random
 
 class LocationPingCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, trip_id):
 
-        # DELETE PINGS OLDER THAN 3 HOURS
-        cutoff = timezone.now() - timedelta(hours=3)
-        LocationPing.objects.filter(timestamp__lt=cutoff).delete()
-
         trip = get_object_or_404(Trip, id=trip_id)
 
         if request.user.role != "driver" or trip.driver != request.user:
             return Response({"detail": "Not allowed"}, status=403)
+
+        # DELETE OLD PINGS OCCASIONALLY
+        if random.randint(1,10) == 1:
+            cutoff = timezone.now() - timedelta(hours=3)
+            LocationPing.objects.filter(timestamp__lt=cutoff).delete()
 
         data = request.data.copy()
         data["trip"] = trip_id
