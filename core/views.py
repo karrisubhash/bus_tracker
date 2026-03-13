@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from .models import BusCurrentLocation
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from geopy distance import geodesic
 from .models import Trip, LocationPing
 from .serializers import (
     MyTokenObtainPairSerializer,
@@ -105,6 +105,17 @@ class LocationPingCreateView(APIView):
         if random.randint(1,10) == 1:
             cutoff = timezone.now() - timedelta(hours=3)
             LocationPing.objects.filter(timestamp__lt=cutoff).delete()
+            last = BusCurrentLocation.objects.filter(trip=trip).first()
+
+            if last:
+                old = (last.lat, last.lon)
+                new = (float(request.data["lat"]), float(request.data["lon"]))
+            
+                distance = geodesic(old, new).meters
+            
+                # Ignore GPS noise
+                if distance < 5:
+                    return Response({"detail": "Ignored small movement"})
 
         data = request.data.copy()
         data["trip"] = trip_id
