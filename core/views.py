@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
-
+from .models import BusCurrentLocation
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Trip, LocationPing
@@ -295,7 +295,7 @@ def admin_all_trips(request):
 # ======================================================
 # ADMIN: LIVE MAP (ALL ONGOING BUSES)
 # ======================================================
-from django.db import connection
+'''from django.db import connection
 @api_view(["GET"])
 @permission_classes([])
 def admin_live_locations(request):
@@ -326,6 +326,34 @@ def admin_live_locations(request):
         })
 
     return Response(result)# ======================================================
+    '''
+@api_view(["GET"])
+@permission_classes([])
+def admin_live_locations(request):
+
+    locations = BusCurrentLocation.objects.select_related(
+        "trip__bus",
+        "trip__route",
+        "trip__driver"
+    ).filter(trip__status="ongoing")
+
+    result = []
+
+    for loc in locations:
+
+        trip = loc.trip
+
+        result.append({
+            "trip_id": trip.id,
+            "bus": trip.bus.registration_no if trip.bus else "",
+            "route": trip.route.name if trip.route else "",
+            "driver": trip.driver.username if trip.driver else "",
+            "lat": loc.lat,
+            "lon": loc.lon,
+            "has_issue": trip.has_issue,
+        })
+
+    return Response(result)
 # ADMIN: ONGOING TRIPS (SUMMARY TABLE)
 # ======================================================
 
