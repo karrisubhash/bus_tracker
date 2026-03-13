@@ -16,14 +16,7 @@ class Migration(migrations.Migration):
             model_name='bus',
             name='description',
         ),
-        migrations.RemoveField(
-            model_name='route',
-            name='polyline',
-        ),
-        migrations.RemoveField(
-            model_name='route',
-            name='stops',
-        ),
+       
         migrations.AddField(
             model_name='route',
             name='path',
