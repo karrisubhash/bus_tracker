@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from .models import BusCurrentLocation
 from rest_framework_simplejwt.views import TokenObtainPairView
-from geopy distance import geodesic
+from geopy.distance import geodesic
 from .models import Trip, LocationPing
 from .serializers import (
     MyTokenObtainPairSerializer,
