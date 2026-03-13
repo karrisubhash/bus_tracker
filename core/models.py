@@ -106,7 +106,7 @@ class BusCurrentLocation(models.Model):
         return f"{self.trip} - {self.lat},{self.lon}"
 
 # ===================== LOCATION PING =====================
-'''class LocationPing(models.Model):
+class LocationPing(models.Model):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name="pings")
     lat = models.FloatField()
     lon = models.FloatField()
@@ -122,43 +122,3 @@ class BusCurrentLocation(models.Model):
 
     def __str__(self):
         return f"Ping {self.id} — Trip {self.trip_id}"
-'''
-
-class LocationPingCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, trip_id):
-
-        # DELETE PINGS OLDER THAN 3 HOURS
-        cutoff = timezone.now() - timedelta(hours=3)
-        LocationPing.objects.filter(timestamp__lt=cutoff).delete()
-
-        trip = get_object_or_404(Trip, id=trip_id)
-
-        if request.user.role != "driver" or trip.driver != request.user:
-            return Response({"detail": "Not allowed"}, status=403)
-
-        data = request.data.copy()
-        data["trip"] = trip_id
-
-        serializer = LocationPingSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        ping = serializer.save(trip=trip)
-
-        channel_layer = get_channel_layer()
-
-        async_to_sync(channel_layer.group_send)(
-            "bus_locations",
-            {
-                "type": "bus_location",
-                "trip_id": trip.id,
-                "lat": ping.lat,
-                "lon": ping.lon,
-                "bus": trip.bus.registration_no,
-                "driver": trip.driver.username if trip.driver else "",
-                "route": trip.route.name if trip.route else "",
-                "has_issue": trip.has_issue
-            }
-        )
-
-        return Response(serializer.data, status=201)
