@@ -46,7 +46,7 @@ class BusLocationConsumer(AsyncWebsocketConsumer):
             "bus": event["bus"],
             "driver": event["driver"],
             "route": event["route"],
-            "has_issue": event["has_issue"]
+            "has_issue": event["has_issue"],
             "ended":event["ended",False]
 
         }))
