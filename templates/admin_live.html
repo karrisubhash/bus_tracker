@@ -148,6 +148,14 @@ marker.setLatLng(newLatLng)
 function updateBus(data){
 
 const id = data.trip_id
+    // handle trip end FIRST
+if(data.ended){
+    if(buses[id]){
+        map.removeLayer(buses[id])
+        delete buses[id]
+    }
+    return
+}
 const lat = data.lat
 const lon = data.lon
 
@@ -183,13 +191,13 @@ loadRoute(id)
     const newPos = L.latLng(lat, lon)
 
     const distance = current.distanceTo(newPos)
+buses[id].setIcon(icon)
 
     // ignore GPS noise
     if(distance < 5){
         return
     }
 smoothMove(buses[id],position)
-buses[id].setIcon(icon)
 
 }
 
