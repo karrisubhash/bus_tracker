@@ -169,7 +169,16 @@ def end_trip(request, trip_id):
     trip.status = "completed"
     trip.end_time = timezone.now()
     trip.save()
+    channel_layer = get_channel_layer()
 
+    async_to_sync(channel_layer.group_send)(
+        "bus_locations",
+        {
+            "type": "bus_location",
+            "trip_id": trip.id,
+            "ended": True
+        }
+    )
     return Response({"detail": "Trip ended"})
 
 
