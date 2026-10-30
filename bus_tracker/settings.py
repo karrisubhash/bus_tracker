@@ -13,7 +13,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 # =====================================================
 
-SECRET_KEY = 'django-insecure-2=vmeox2m%+noodja(ga0p(=br3!n_4-&%=m%5=+@11(2g1^%z'
+from django.core.management.utils import get_random_secret_key
+
+# Set DJANGO_SECRET_KEY in the host's environment (Render -> Environment).
+# Without it a random key is generated at start-up, so sessions and JWTs reset on every restart.
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or get_random_secret_key()
 
 DEBUG = False
 
