@@ -20,3 +20,7 @@ Thumbs.db
 
 # ngrok
 ngrok/
+
+# Environment / secrets
+.env
+.env.*
