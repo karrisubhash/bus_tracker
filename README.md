@@ -137,7 +137,7 @@ No tests are written yet (`core/tests.py` is a stub). See *Future improvements*.
 
 ## Future improvements
 
-- Run the noise filter on every ping, not just the 1-in-10 cleanup pass (see the cleanup report).
+- Run the GPS noise filter on every ping. It currently sits inside the 1-in-10 cleanup branch in `LocationPingCreateView`.
 - Authenticate WebSocket connections and scope broadcasts per route instead of one global group.
 - Add API and consumer tests (`channels.testing.WebsocketCommunicator`).
 - Publish a load-test script and its results for the concurrency and latency figures.
