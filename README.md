@@ -116,11 +116,6 @@ All endpoints are under `/api/`. Authenticate with `Authorization: Bearer <acces
 { "trip_id": 12, "lat": 17.7231, "lon": 83.3012, "bus": "AP31XX0000", "driver": "ravi", "route": "Route 4", "has_issue": false }
 ```
 
-## Screenshots
-
-<!-- TODO(Subhash): add screenshots
-![Admin live map](docs/images/admin-live.png)
-![Student view](docs/images/student-live.png) -->
 
 ## Testing
 
